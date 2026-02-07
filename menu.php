@@ -43,8 +43,9 @@ $menu_result = $conn->query($menu_sql);
         /* Food Card */
         .food-card {
             background: white; margin: 15px; padding: 15px; border-radius: 10px;
-            box-shadow: 0 2px 5px rgba(0,0,0,0.05); display: flex; justify-content: space-between; align-items: center;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.05); display: flex; justify-content: space-between; align-items: center; gap:12px;
         }
+        .food-card img { height:72px; width:72px; object-fit:cover; border-radius:8px; flex-shrink:0; }
         .food-info h3 { margin: 0 0 5px 0; font-size: 1.1em; }
         .food-info .price { color: #28a745; font-weight: bold; }
         .food-info .cat { font-size: 0.8em; color: #888; background: #eee; padding: 2px 6px; border-radius: 4px; }
@@ -98,9 +99,25 @@ $menu_result = $conn->query($menu_sql);
         <?php 
         // Logic to disable button if Out of Stock
         $cssClass = $row['is_available'] ? "food-card" : "food-card out-of-stock";
+
+        // Image detection for menu item (images/menu/{item_id}.jpg|png|webp) with fallback
+        $fallback_external = 'https://via.placeholder.com/72?text=No+Image';
+        $localBase = __DIR__ . '/images/menu/' . $row['item_id'];
+        $relImage = '';
+        if (file_exists($localBase . '.jpg')) {
+            $relImage = 'images/menu/' . $row['item_id'] . '.jpg';
+        } elseif (file_exists($localBase . '.png')) {
+            $relImage = 'images/menu/' . $row['item_id'] . '.png';
+        } elseif (file_exists($localBase . '.webp')) {
+            $relImage = 'images/menu/' . $row['item_id'] . '.webp';
+        } else {
+            $placeholderLocal = __DIR__ . '/images/placeholder.png';
+            $relImage = file_exists($placeholderLocal) ? 'images/placeholder.png' : $fallback_external;
+        }
         ?>
 
         <div class="<?php echo $cssClass; ?>">
+            <img src="<?php echo htmlspecialchars($relImage); ?>" alt="<?php echo htmlspecialchars($row['name']); ?>" style="height:72px; width:72px; object-fit:cover; border-radius:8px; margin-right:12px;">
             <div class="food-info">
                 <h3><?php echo $row['name']; ?></h3>
                 <span class="cat"><?php echo $row['category']; ?></span>
