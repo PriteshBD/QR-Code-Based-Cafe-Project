@@ -7,8 +7,11 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $phone = $_POST['password']; // Using Phone as Password for simplicity
 
     // Check against the Staff table
-    $sql = "SELECT * FROM staff WHERE name='$name' AND phone='$phone' AND role='Head Chef'";
-    $result = $conn->query($sql);
+    // Use prepared statements to prevent SQL Injection
+    $stmt = $conn->prepare("SELECT * FROM staff WHERE name=? AND phone=? AND role='Head Chef'");
+    $stmt->bind_param("ss", $name, $phone);
+    $stmt->execute();
+    $result = $stmt->get_result();
 
     if ($result->num_rows > 0) {
         $_SESSION['staff_logged_in'] = true;

@@ -6,10 +6,22 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     
     // 1. Get Data
     $table_id = isset($_SESSION['table_id']) ? $_SESSION['table_id'] : 1;
-    $total_amount = $_POST['total_amount'];
-    $order_note = $_POST['order_note'];
+    $order_note = $conn->real_escape_string($_POST['order_note']);
+    
+    // Recalculate total server-side to prevent manipulation
+    $total_amount = 0;
+    if (!empty($_SESSION['cart'])) {
+        $ids = implode(',', array_map('intval', array_keys($_SESSION['cart'])));
+        $price_res = $conn->query("SELECT item_id, price FROM menu_items WHERE item_id IN ($ids)");
+        while($row = $price_res->fetch_assoc()) {
+            if (isset($_SESSION['cart'][$row['item_id']])) {
+                $total_amount += $row['price'] * $_SESSION['cart'][$row['item_id']];
+            }
+        }
+    }
     
     // 2. Create the Order Entry
+    // Note: payment_status is 'Pending' initially
     $sql = "INSERT INTO orders (table_id, total_amount, order_note, payment_status, order_status) 
             VALUES ('$table_id', '$total_amount', '$order_note', 'Pending', 'Pending')";
     
@@ -20,6 +32,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         // 3. Move Items from Session Cart to Database
         foreach ($_SESSION['cart'] as $item_id => $qty) {
             // Get price dynamically to ensure accuracy
+            $item_id = (int)$item_id;
             $price_query = "SELECT price FROM menu_items WHERE item_id = $item_id";
             $price_res = $conn->query($price_query);
             $price_row = $price_res->fetch_assoc();

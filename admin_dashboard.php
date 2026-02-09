@@ -81,7 +81,7 @@ if (isset($_POST['mark_attendance'])) {
         <a href="#" class="menu-item">📊 Dashboard</a>
         <a href="menu.php" target="_blank" class="menu-item">📱 View Live Menu</a>
         <a href="staff_login.php" target="_blank" class="menu-item">👨‍🍳 Kitchen View</a>
-        <a href="admin_login.php" class="menu-item">🚪 Logout</a>
+        <a href="logout.php" class="menu-item">🚪 Logout</a>
     </div>
 
     <div class="content">

@@ -50,7 +50,7 @@ $total_price = 0;
             ?>
             <div class="cart-item">
                 <div>
-                    <strong><?php echo $row['name']; ?></strong><br>
+                    <strong><?php echo htmlspecialchars($row['name']); ?></strong><br>
                     <small>₹<?php echo $row['price']; ?> x <?php echo $qty; ?></small>
                 </div>
                 <div style="font-weight:bold;">₹<?php echo $subtotal; ?></div>
