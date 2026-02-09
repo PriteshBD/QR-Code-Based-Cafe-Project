@@ -71,6 +71,7 @@ $result = $conn->query($sql);
             <div>
                 <form method="POST">
                     <input type="hidden" name="order_id" value="<?php echo $row['order_id']; ?>">
+                    <input type="hidden" name="update_status" value="1">
                     
                     <?php if($row['order_status'] == 'Pending'): ?>
                         <input type="text" name="est_time" placeholder="Time (e.g. 15m)" required size="10">

@@ -8,18 +8,21 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
     // Check against the Staff table
     // Use prepared statements to prevent SQL Injection
-    $stmt = $conn->prepare("SELECT * FROM staff WHERE name=? AND phone=? AND role='Head Chef'");
+    $stmt = $conn->prepare("SELECT * FROM staff WHERE name=? AND phone=?");
     $stmt->bind_param("ss", $name, $phone);
     $stmt->execute();
     $result = $stmt->get_result();
 
     if ($result->num_rows > 0) {
+        $staff = $result->fetch_assoc();
         $_SESSION['staff_logged_in'] = true;
-        $_SESSION['staff_name'] = $name;
+        $_SESSION['staff_name'] = $staff['name'];
+        $_SESSION['staff_id'] = $staff['staff_id'];
+        $_SESSION['staff_role'] = $staff['role'];
         header("Location: staff_dashboard.php");
         exit();
     } else {
-        $error = "Invalid Credentials! (Try: Ramesh Kumar / 9876543210)";
+        $error = "Invalid Credentials!";
     }
 }
 ?>

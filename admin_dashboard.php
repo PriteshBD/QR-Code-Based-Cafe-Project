@@ -36,7 +36,7 @@ if (isset($_POST['add_staff'])) {
 // Mark Attendance
 if (isset($_POST['mark_attendance'])) {
     $staff_id = $_POST['staff_id'];
-    $status = $_POST['status'];
+    $status = $_POST['mark_attendance'];
     $date = date('Y-m-d');
     $conn->query("INSERT INTO attendance (staff_id, date, status) VALUES ('$staff_id', '$date', '$status') ON DUPLICATE KEY UPDATE status='$status'");
     header("Location: admin_dashboard.php");
@@ -79,6 +79,9 @@ if (isset($_POST['mark_attendance'])) {
     <div class="sidebar">
         <h2>P&S Admin</h2>
         <a href="#" class="menu-item">📊 Dashboard</a>
+        <a href="view_orders.php" class="menu-item">📦 View Orders</a>
+        <a href="generate_qr.php" class="menu-item">🎯 Generate QR Codes</a>
+        <a href="manage_menu.php" class="menu-item">📋 Manage Menu</a>
         <a href="menu.php" target="_blank" class="menu-item">📱 View Live Menu</a>
         <a href="staff_login.php" target="_blank" class="menu-item">👨‍🍳 Kitchen View</a>
         <a href="logout.php" class="menu-item">🚪 Logout</a>
