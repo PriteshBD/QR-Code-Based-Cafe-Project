@@ -1,6 +1,6 @@
 <?php
 session_start();
-include 'db_connect.php';
+include 'includes/db_connect.php';
 
 if (!isset($_SESSION['last_order_id'])) {
     echo "<p style='font-family:Arial, sans-serif; padding:30px; text-align:center;'>No active order found. <a href=\"menu.php\">Return to menu</a></p>";
@@ -169,6 +169,15 @@ if ($active_index === false) $active_index = 0;
         @media (max-width:880px){
             .main{grid-template-columns:1fr;}
             .container{padding:18px}
+            .header{flex-direction:column; align-items:flex-start;}
+            .header > div:last-child{text-align:left; width:100%;}
+            .btn{width:100%; text-align:center; margin:4px 0;}
+        }
+        
+        /* Animation for success message */
+        @keyframes slideDown {
+            from { opacity:0; transform:translateY(-20px); }
+            to { opacity:1; transform:translateY(0); }
         }
 
         /* small helper colors for banners */
@@ -194,9 +203,11 @@ if ($active_index === false) $active_index = 0;
 <body>
     <div class="container">
         <?php if (!empty($_SESSION['simulate_msg'])): ?>
-            <div style="background:#d4edda;border:1px solid #c3e6cb;color:#155724;padding:12px;border-radius:8px;margin-bottom:12px;">
-                <?php echo htmlspecialchars($_SESSION['simulate_msg']); unset($_SESSION['simulate_msg']); ?>
+            <div style="background:linear-gradient(135deg, #d4edda 0%, #c3e6cb 100%);border:2px solid #28a745;color:#155724;padding:16px;border-radius:12px;margin-bottom:16px;text-align:center;font-weight:600;box-shadow: 0 4px 12px rgba(40,167,69,0.2);animation: slideDown 0.3s ease;">
+                <div style="font-size:1.1rem;">✅ <?php echo htmlspecialchars($_SESSION['simulate_msg']); ?></div>
+                <div style="font-size:0.85rem;margin-top:6px;font-weight:400;">Your order is being prepared in the kitchen!</div>
             </div>
+            <?php unset($_SESSION['simulate_msg']); ?>
         <?php endif; ?>
         <div class="header">
             <div>
@@ -313,13 +324,18 @@ if ($active_index === false) $active_index = 0;
                             <a href="#" class="btn btn-ghost" id="copyUpi">Copy UPI</a>
                         </div>
 
-                        <?php if (!empty($_SESSION['staff_logged_in']) || (isset($_GET['demo']) && $_GET['demo'] === '1')): ?>
-                            <div style="margin-top:10px">
-                                <a href="simulate_payment.php?order_id=<?php echo $order_id; ?>&demo=1" class="btn" style="background:#6c757d; color:#fff;" onclick="return confirm('Simulate payment for this order?')">Simulate Payment (Demo)</a>
+                        <!-- Demo Payment Options (Always visible for degree project demonstration) -->
+                        <div style="margin-top:16px; padding:12px; background:rgba(33,150,243,0.08); border-radius:10px; border:1px dashed #2196F3;">
+                            <div style="font-size:0.9rem; font-weight:600; color:#2196F3; margin-bottom:8px;">🎓 Demo Payment Options</div>
+                            <div style="font-size:0.85rem; color:var(--muted); margin-bottom:10px;">For demonstration purposes only</div>
+                            <div style="display:flex; flex-direction:column; gap:8px;">
+                                <a href="simulate_payment.php?order_id=<?php echo $order_id; ?>&demo=1&payment_method=Cash" class="btn" style="background:#4CAF50; color:#fff; padding:10px; text-align:center;" onclick="return confirm('✅ Confirm Cash Payment?\n\nThis will mark the order as PAID and move it to the kitchen.');">💵 Pay with Cash (Demo)</a>
+                                <a href="simulate_payment.php?order_id=<?php echo $order_id; ?>&demo=1&payment_method=Card" class="btn" style="background:#FF9800; color:#fff; padding:10px; text-align:center;" onclick="return confirm('✅ Confirm Card Payment?\n\nThis will mark the order as PAID and move it to the kitchen.');">💳 Pay with Card (Demo)</a>
+                                <a href="simulate_payment.php?order_id=<?php echo $order_id; ?>&demo=1&payment_method=UPI" class="btn btn-ghost" style="padding:10px; text-align:center; background:rgba(0,0,0,0.05);" onclick="return confirm('✅ Confirm UPI Payment?\n\nThis will mark the order as PAID and move it to the kitchen.');">📱 Pay with UPI (Demo)</a>
                             </div>
-                        <?php endif; ?>
+                        </div>
 
-                        <div style="margin-top:10px; font-size:0.88rem; color:var(--muted)">Scan the QR or open your UPI app to complete payment. Payment will be confirmed automatically.</div>
+                        <div style="margin-top:10px; font-size:0.88rem; color:var(--muted)">Real UPI: Scan QR or click "Open in UPI". For demo: Use buttons above.</div>
 
                     <?php elseif ($status == 'Cooking'): ?>
                         <div style="font-weight:700; font-size:1.05rem">Preparing your order</div>

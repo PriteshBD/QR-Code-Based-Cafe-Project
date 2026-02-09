@@ -2,11 +2,9 @@
 
 A comprehensive QR code-based digital ordering system for cafes and restaurants, built with PHP and MySQL.
 
-> 🎓 **Perfect for Degree Projects!** This project includes a **Demo Payment Mode** that works great on mobile phones - no real payment needed for demonstrations! [📖 See Demo Payment Guide](docs/DEMO_PAYMENT_GUIDE.md)
-
 ## 📋 Project Overview
 
-This is a graduation-level project that implements a complete digital ordering system where customers scan a QR code on their table to view the menu, place orders, make payments via UPI (or demo mode), and track their order status in real-time.
+This is a graduation-level project that implements a complete digital ordering system where customers scan a QR code on their table to view the menu, place orders, make payments via UPI, and track their order status in real-time.
 
 ## ✨ Features
 
@@ -14,7 +12,7 @@ This is a graduation-level project that implements a complete digital ordering s
 - 🎯 **QR Code Scanning**: Each table has a unique QR code for ordering (works on mobile!)
 - 📱 **Mobile-Friendly Menu**: Fully responsive design for smartphones
 - 🛒 **Shopping Cart**: Add/remove items, view cart total
-- 💳 **Payment Options**: UPI + **Demo Mode for Presentations** (Cash/Card/UPI simulation)
+- 💳 **UPI Payment**: Integrated UPI payment via QR code
 - 📊 **Order Tracking**: Real-time order status tracking with estimated time
 - 🔔 **Call Waiter**: Request assistance from staff
 - 🧾 **Digital Receipt**: Printable order receipt
@@ -95,22 +93,29 @@ Other staff credentials:
 ```
 QR_Code_Based_Cafe_Project/
 ├── index.php                 # Landing page
-├── database/                 # Database files
-│   └── setup.sql             # Database setup script
-├── includes/                 # Shared files
-│   └── db_connect.php        # Database connection
-├── admin/                    # Admin panel files
-├── staff/                    # Staff panel files
-├── docs/                     # Documentation
-│   ├── README.md
-│   ├── MOBILE_QR_GUIDE.md
-│   ├── TESTING_GUIDE.md
-│   └── PROJECT_STRUCTURE.md
-├── images/                   # Images folder
-└── customer files/           # Menu, cart, order tracking, etc.
+├── menu.php                  # Customer menu page
+├── cart.php                  # Shopping cart
+├── place_order.php           # Order placement handler
+├── track_order.php           # Order tracking page
+├── admin_login.php           # Admin login
+├── admin_dashboard.php       # Admin dashboard
+├── staff_login.php           # Staff login
+├── staff_dashboard.php       # Kitchen display system
+├── manage_menu.php           # Menu management
+├── edit_item.php             # Edit menu item
+├── view_orders.php           # Orders management
+├── generate_qr.php           # QR code generator
+├── simulate_payment.php      # Payment simulation (demo)
+├── add_to_cart.php           # Add item to cart handler
+├── clear_cart.php            # Clear cart handler
+├── call_waiter.php           # Call waiter handler
+├── logout.php                # Logout handler
+├── mark_absent.php           # Auto-mark absent staff (scheduled task)
+├── db_connect.php            # Database connection
+├── setup.sql                 # Database setup script
+├── README.md                 # This file
+└── images/                   # Images folder (menu items, etc.)
 ```
-
-See [docs/PROJECT_STRUCTURE.md](docs/PROJECT_STRUCTURE.md) for detailed structure information.
 
 ## 🗄️ Database Schema
 

@@ -5,7 +5,7 @@
 // NOTE: Keep this file out of public repos or protect it in production.
 
 session_start();
-include 'db_connect.php';
+include 'includes/db_connect.php';
 
 if (!isset($_REQUEST['order_id'])) {
     http_response_code(400);
@@ -38,20 +38,24 @@ if (!$res || $res->num_rows === 0) {
 }
 $order = $res->fetch_assoc();
 
+// Get payment method from request
+$payment_method = isset($_REQUEST['payment_method']) ? $conn->real_escape_string($_REQUEST['payment_method']) : 'Cash';
+
 // Prepare update: mark paid; if pending, advance to Cooking with optional prep_time
 $prep_time = isset($_REQUEST['prep_time']) ? $conn->real_escape_string($_REQUEST['prep_time']) : '10 mins';
 if (strtolower($order['order_status']) === 'pending') {
-    $sql = "UPDATE orders SET payment_status='Paid', order_status='Cooking', estimated_time='$prep_time' WHERE order_id=$order_id";
+    $sql = "UPDATE orders SET payment_status='Paid', payment_method='$payment_method', order_status='Cooking', estimated_time='$prep_time' WHERE order_id=$order_id";
 } else {
-    $sql = "UPDATE orders SET payment_status='Paid' WHERE order_id=$order_id";
+    $sql = "UPDATE orders SET payment_status='Paid', payment_method='$payment_method' WHERE order_id=$order_id";
 }
 $conn->query($sql);
 
 // Make this order visible to customer track page
 $_SESSION['last_order_id'] = $order_id;
 
-// Optional flash message
-$_SESSION['simulate_msg'] = 'Payment simulated for Order #' . $order_id;
+// Optional flash message with payment method
+$_SESSION['simulate_msg'] = '✅ Payment successful via ' . $payment_method . ' for Order #' . $order_id;
+$_SESSION['payment_success'] = true;
 
 // Redirect to tracking page so presenter can show the result
 header('Location: track_order.php');

@@ -121,26 +121,40 @@
         <div class="features">
             <h3>✨ Features</h3>
             <ul>
-                <li>Scan QR code to view menu & place orders</li>
+                <li>Scan QR code to view menu & place orders (Works on mobile!)</li>
                 <li>Real-time order tracking with estimated time</li>
-                <li>UPI payment integration</li>
+                <li>UPI payment integration + Demo payment for presentations</li>
                 <li>Kitchen display system for staff</li>
                 <li>Admin dashboard with analytics</li>
                 <li>Staff attendance management</li>
+                <li>Mobile-friendly responsive design</li>
             </ul>
+        </div>
+        
+        <div class="features" style="background: linear-gradient(135deg, #e3f2fd 0%, #bbdefb 100%); border-left: 4px solid #2196F3;">
+            <h3>🎓 Demo Mode for Presentations</h3>
+            <p style="margin-bottom: 10px;"><strong>Perfect for degree project demonstrations!</strong></p>
+            <ol style="text-align: left; margin: 10px 0; padding-left: 20px;">
+                <li>Open menu on mobile and add items to cart</li>
+                <li>Place your order</li>
+                <li>On the order tracking page, you'll see <strong>"Demo Payment Options"</strong></li>
+                <li>Click <strong>"Pay with Cash"</strong>, <strong>"Pay with Card"</strong>, or <strong>"Pay with UPI"</strong></li>
+                <li>Order automatically moves to kitchen! ✅</li>
+            </ol>
+            <p style="font-size: 0.9em; margin-top: 10px;"><em>No real payment needed - perfect for showcasing your project!</em></p>
         </div>
 
         <div class="buttons">
-            <a href="admin_login.php" class="btn btn-admin">
+            <a href="admin/admin_login.php" class="btn btn-admin">
                 🔐 Admin Login
             </a>
-            <a href="staff_login.php" class="btn btn-staff">
+            <a href="staff/staff_login.php" class="btn btn-staff">
                 👨‍🍳 Staff Login
             </a>
             <a href="menu.php?table_id=1" class="btn btn-menu">
                 📱 Demo Menu (Table 1)
             </a>
-            <a href="generate_qr.php" class="btn btn-demo" onclick="alert('Please login as admin first'); return false;">
+            <a href="admin/generate_qr.php" class="btn btn-demo" onclick="alert('Please login as admin first'); return false;">
                 🎯 Generate QR Codes
             </a>
         </div>

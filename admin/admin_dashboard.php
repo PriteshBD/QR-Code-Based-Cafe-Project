@@ -1,6 +1,6 @@
 <?php
 session_start();
-include 'db_connect.php';
+include '../includes/db_connect.php';
 
 if (!isset($_SESSION['admin_logged_in'])) {
     header("Location: admin_login.php");
@@ -40,6 +40,20 @@ if (isset($_POST['mark_attendance'])) {
     $date = date('Y-m-d');
     $conn->query("INSERT INTO attendance (staff_id, date, status) VALUES ('$staff_id', '$date', '$status') ON DUPLICATE KEY UPDATE status='$status'");
     header("Location: admin_dashboard.php");
+}
+
+// Mark all absent staff
+if (isset($_POST['mark_all_absent'])) {
+    $date = date('Y-m-d');
+    $staff_result = $conn->query("SELECT staff_id FROM staff");
+    while($staff = $staff_result->fetch_assoc()) {
+        $staff_id = $staff['staff_id'];
+        $check = $conn->query("SELECT * FROM attendance WHERE staff_id = $staff_id AND date = '$date'");
+        if($check->num_rows == 0) {
+            $conn->query("INSERT INTO attendance (staff_id, date, status) VALUES ($staff_id, '$date', 'Absent')");
+        }
+    }
+    header("Location: admin_dashboard.php?marked=absent");
 }
 ?>
 
@@ -82,13 +96,19 @@ if (isset($_POST['mark_attendance'])) {
         <a href="view_orders.php" class="menu-item">📦 View Orders</a>
         <a href="generate_qr.php" class="menu-item">🎯 Generate QR Codes</a>
         <a href="manage_menu.php" class="menu-item">📋 Manage Menu</a>
-        <a href="menu.php" target="_blank" class="menu-item">📱 View Live Menu</a>
-        <a href="staff_login.php" target="_blank" class="menu-item">👨‍🍳 Kitchen View</a>
-        <a href="logout.php" class="menu-item">🚪 Logout</a>
+        <a href="../menu.php" target="_blank" class="menu-item">📱 View Live Menu</a>
+        <a href="../staff/staff_login.php" target="_blank" class="menu-item">👨‍🍳 Kitchen View</a>
+        <a href="../logout.php" class="menu-item">🚪 Logout</a>
     </div>
 
     <div class="content">
         <h1>Dashboard Overview</h1>
+        
+        <?php if(isset($_GET['marked'])): ?>
+            <div style="background:#d4edda; color:#155724; padding:15px; border-radius:8px; margin-bottom:20px; border-left:4px solid #28a745;">
+                ✓ Attendance marked successfully! All staff without login today have been marked as Absent.
+            </div>
+        <?php endif; ?>
         
         <div class="stats-grid">
             <div class="stat-card">
@@ -107,7 +127,20 @@ if (isset($_POST['mark_attendance'])) {
         </div>
 
         <div style="background:white; padding:20px; border-radius:8px;">
-            <h3>👥 Staff Management & Attendance</h3>
+            <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:15px;">
+                <h3>👥 Staff Management & Attendance</h3>
+                <form method="POST" style="display:inline;">
+                    <button type="submit" name="mark_all_absent" 
+                            onclick="return confirm('This will mark all staff without today\'s attendance as Absent. Continue?');"
+                            style="background:#ff9800; color:white; padding:10px 20px; border:none; border-radius:5px; cursor:pointer; font-weight:bold;">
+                        📅 Mark Remaining as Absent
+                    </button>
+                </form>
+            </div>
+            
+            <div style="background:#e3f2fd; padding:12px; border-radius:5px; margin-bottom:15px; font-size:0.9em; color:#1565c0;">
+                💡 <strong>Auto Attendance:</strong> Staff are automatically marked Present when they login. Use the button above to mark remaining staff as Absent at day's end.
+            </div>
             
             <form method="POST" class="form-inline" style="margin-bottom:20px; background:#eee; padding:15px;">
                 <input type="text" name="name" placeholder="Name" required>

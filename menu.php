@@ -1,6 +1,6 @@
 <?php
 session_start();
-include 'db_connect.php'; // Connects to your database
+include 'includes/db_connect.php'; // Connects to your database
 
 // 1. Get Table ID from URL (Default to 1 if missing for testing)
 if (isset($_GET['table_id'])) {

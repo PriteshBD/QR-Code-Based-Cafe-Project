@@ -1,6 +1,6 @@
 <?php
 session_start();
-include 'db_connect.php';
+include 'includes/db_connect.php';
 
 // If cart is empty, show a message
 if (empty($_SESSION['cart'])) {
