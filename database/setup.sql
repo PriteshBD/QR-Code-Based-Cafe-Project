@@ -48,7 +48,7 @@ CREATE TABLE IF NOT EXISTS order_items (
     quantity INT NOT NULL,
     price DECIMAL(10,2) NOT NULL,
     FOREIGN KEY (order_id) REFERENCES orders(order_id) ON DELETE CASCADE,
-    FOREIGN KEY (item_id) REFERENCES menu_items(item_id)
+    FOREIGN KEY (item_id) REFERENCES menu_items(item_id) ON DELETE CASCADE
 );
 
 -- 5. Staff Table

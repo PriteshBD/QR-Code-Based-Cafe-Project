@@ -15,9 +15,29 @@ if (isset($_POST['add_item'])) {
     $is_available = isset($_POST['is_available']) ? 1 : 0;
     
     $sql = "INSERT INTO menu_items (name, price, category, is_available) VALUES ('$name', '$price', '$category', '$is_available')";
-    $conn->query($sql);
-    header("Location: manage_menu.php?success=added");
-    exit();
+    if ($conn->query($sql)) {
+        $item_id = $conn->insert_id;
+        
+        // Handle image upload
+        if (isset($_FILES['item_image']) && $_FILES['item_image']['size'] > 0) {
+            $upload_dir = '../images/menu/';
+            if (!is_dir($upload_dir)) {
+                mkdir($upload_dir, 0755, true);
+            }
+            
+            $filename = $_FILES['item_image']['name'];
+            $ext = pathinfo($filename, PATHINFO_EXTENSION);
+            $allowed = ['jpg', 'jpeg', 'png', 'webp'];
+            
+            if (in_array(strtolower($ext), $allowed) && $_FILES['item_image']['size'] < 5000000) {
+                $new_filename = $item_id . '.' . $ext;
+                move_uploaded_file($_FILES['item_image']['tmp_name'], $upload_dir . $new_filename);
+            }
+        }
+        
+        header("Location: manage_menu.php?success=added");
+        exit();
+    }
 }
 
 // Handle Update Item
@@ -37,6 +57,17 @@ if (isset($_POST['update_item'])) {
 // Handle Delete Item
 if (isset($_GET['delete'])) {
     $item_id = (int)$_GET['delete'];
+    
+    // Check if item exists in any order_items
+    $check = $conn->query("SELECT COUNT(*) as count FROM order_items WHERE item_id=$item_id");
+    $result = $check->fetch_assoc();
+    
+    if ($result['count'] > 0) {
+        // Delete related order items first
+        $conn->query("DELETE FROM order_items WHERE item_id=$item_id");
+    }
+    
+    // Now delete the menu item
     $conn->query("DELETE FROM menu_items WHERE item_id=$item_id");
     header("Location: manage_menu.php?success=deleted");
     exit();
@@ -144,6 +175,23 @@ $cat_result = $conn->query("SELECT DISTINCT category FROM menu_items ORDER BY ca
             margin-bottom: 20px;
             border-left: 4px solid #28a745;
         }
+        .item-thumb {
+            width: 50px;
+            height: 50px;
+            object-fit: cover;
+            border-radius: 5px;
+        }
+        .no-image {
+            width: 50px;
+            height: 50px;
+            background: #eee;
+            border-radius: 5px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #999;
+            font-size: 1.5em;
+        }
     </style>
 </head>
 <body>
@@ -160,7 +208,7 @@ $cat_result = $conn->query("SELECT DISTINCT category FROM menu_items ORDER BY ca
 
     <div class="container">
         <h2>➕ Add New Menu Item</h2>
-        <form method="POST">
+        <form method="POST" enctype="multipart/form-data">
             <div class="form-grid">
                 <input type="text" name="name" placeholder="Item Name" required>
                 <input type="number" step="0.01" name="price" placeholder="Price (₹)" required>
@@ -191,6 +239,13 @@ $cat_result = $conn->query("SELECT DISTINCT category FROM menu_items ORDER BY ca
                     Available
                 </label>
             </div>
+            <div class="form-grid">
+                <div>
+                    <label style="display: block; margin-bottom: 5px; font-weight: bold;">📷 Item Image (Optional):</label>
+                    <input type="file" name="item_image" accept="image/jpeg,image/png,image/webp" style="padding: 8px;">
+                    <small style="color: #666; display: block; margin-top: 5px;">Accepted formats: JPG, PNG, WebP (Max 5MB)</small>
+                </div>
+            </div>
             <button type="submit" name="add_item" class="btn btn-success">Add Item</button>
         </form>
     </div>
@@ -201,6 +256,7 @@ $cat_result = $conn->query("SELECT DISTINCT category FROM menu_items ORDER BY ca
             <thead>
                 <tr>
                     <th>ID</th>
+                    <th>Image</th>
                     <th>Name</th>
                     <th>Category</th>
                     <th>Price</th>
@@ -209,9 +265,23 @@ $cat_result = $conn->query("SELECT DISTINCT category FROM menu_items ORDER BY ca
                 </tr>
             </thead>
             <tbody>
-                <?php while($item = $menu_result->fetch_assoc()): ?>
+                <?php 
+                $menu_result->data_seek(0);
+                while($item = $menu_result->fetch_assoc()): 
+                    // Check for image
+                    $upload_dir = '../images/menu/';
+                    $images = glob($upload_dir . $item['item_id'] . '.*');
+                    $has_image = !empty($images);
+                ?>
                 <tr>
                     <td><?php echo $item['item_id']; ?></td>
+                    <td>
+                        <?php if($has_image): ?>
+                            <img src="../images/menu/<?php echo basename($images[0]); ?>" alt="<?php echo htmlspecialchars($item['name']); ?>" class="item-thumb">
+                        <?php else: ?>
+                            <div class="no-image">📷</div>
+                        <?php endif; ?>
+                    </td>
                     <td><?php echo htmlspecialchars($item['name']); ?></td>
                     <td><?php echo htmlspecialchars($item['category']); ?></td>
                     <td>₹<?php echo number_format($item['price'], 2); ?></td>

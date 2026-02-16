@@ -1,6 +1,28 @@
 <?php
 session_start();
-// In a real application, you would insert a record into a 'service_requests' table here.
-// For this demo, we will just alert the user.
-echo "<script>alert('Waiter has been notified! They will be at your table shortly.'); window.location.href='menu.php';</script>";
+include 'includes/db_connect.php';
+
+// Get table ID from session
+$table_id = isset($_SESSION['table_id']) ? (int)$_SESSION['table_id'] : 1;
+
+// Insert service request into database
+$sql = "INSERT INTO service_requests (table_id, request_type, status) VALUES ($table_id, 'Waiter Assistance', 'Pending')";
+$result = $conn->query($sql);
+
+if ($result) {
+    // Return success response (can be JSON for AJAX)
+    if (!empty($_GET['ajax'])) {
+        header('Content-Type: application/json');
+        echo json_encode(['success' => true, 'message' => 'Staff notified! They will be at your table shortly.']);
+    } else {
+        echo "<script>alert('✓ Staff notified! They will be at your table shortly.'); window.location.href='menu.php';</script>";
+    }
+} else {
+    if (!empty($_GET['ajax'])) {
+        header('Content-Type: application/json');
+        echo json_encode(['success' => false, 'message' => 'Error notifying staff']);
+    } else {
+        echo "<script>alert('❌ Unable to notify staff. Please try again.'); window.location.href='menu.php';</script>";
+    }
+}
 ?>

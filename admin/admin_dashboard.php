@@ -96,6 +96,7 @@ if (isset($_POST['mark_all_absent'])) {
         <a href="view_orders.php" class="menu-item">📦 View Orders</a>
         <a href="generate_qr.php" class="menu-item">🎯 Generate QR Codes</a>
         <a href="manage_menu.php" class="menu-item">📋 Manage Menu</a>
+        <a href="staff_management.php" class="menu-item">👥 Manage Staff</a>
         <a href="../menu.php" target="_blank" class="menu-item">📱 View Live Menu</a>
         <a href="../staff/staff_login.php" target="_blank" class="menu-item">👨‍🍳 Kitchen View</a>
         <a href="../logout.php" class="menu-item">🚪 Logout</a>

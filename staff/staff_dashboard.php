@@ -27,6 +27,16 @@ if (isset($_POST['update_status'])) {
     exit();
 }
 
+// Handle Reject Order
+if (isset($_POST['reject_order'])) {
+    $order_id = $_POST['order_id'];
+    $reason = $conn->real_escape_string($_POST['reject_reason'] ?? 'No reason provided');
+    
+    $conn->query("UPDATE orders SET order_status='Rejected' WHERE order_id='$order_id'");
+    
+    exit();
+}
+
 // Fetch Active Orders grouped by status
 $sql = "SELECT o.*, GROUP_CONCAT(CONCAT(m.name, ' (x', oi.quantity, ')') SEPARATOR '|') as items 
         FROM orders o 
@@ -114,6 +124,28 @@ $stats = $conn->query("SELECT
         
         .logout-btn:hover {
             background: #e64a19;
+            transform: translateY(-2px);
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 10px;
+        }
+
+        .nav-link {
+            background: rgba(255, 255, 255, 0.2);
+            color: white;
+            padding: 6px 12px;
+            border-radius: 15px;
+            text-decoration: none;
+            font-weight: 600;
+            font-size: 0.85em;
+            transition: all 0.3s;
+            white-space: nowrap;
+        }
+
+        .nav-link:hover {
+            background: rgba(255, 255, 255, 0.3);
             transform: translateY(-2px);
         }
         
@@ -324,6 +356,9 @@ $stats = $conn->query("SELECT
         .btn-served { background: #757575; color: white; }
         .btn-served:hover { background: #616161; }
         
+        .btn-reject { background: #dc3545; color: white; }
+        .btn-reject:hover { background: #c82333; }
+        
         /* Empty State */
         .empty-state {
             text-align: center;
@@ -358,6 +393,11 @@ $stats = $conn->query("SELECT
                 flex-direction: column;
                 gap: 15px;
             }
+
+            .nav-links {
+                width: 100%;
+                justify-content: center;
+            }
             
             .action-form {
                 flex-direction: column;
@@ -365,6 +405,32 @@ $stats = $conn->query("SELECT
             
             .action-form button {
                 width: 100%;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .nav-links {
+                flex-direction: column;
+                gap: 8px;
+            }
+
+            .nav-link {
+                font-size: 0.75em;
+                padding: 5px 10px;
+            }
+
+            .top-bar {
+                padding: 12px 15px;
+            }
+
+            .user-info {
+                flex-direction: column;
+                gap: 10px;
+            }
+
+            .welcome {
+                font-size: 0.85em;
+                text-align: center;
             }
         }
     </style>
@@ -377,6 +443,10 @@ $stats = $conn->query("SELECT
         <div class="user-info">
             <div class="welcome">
                 Welcome, <strong><?php echo htmlspecialchars($staff_name); ?></strong> (<?php echo htmlspecialchars($staff_role); ?>)
+            </div>
+            <div class="nav-links">
+                <a href="service_requests.php" class="nav-link">🔔 Service Requests</a>
+                <a href="staff_profile.php" class="nav-link">👤 My Profile</a>
             </div>
             <a href="../logout.php" class="logout-btn">Logout</a>
         </div>
@@ -458,6 +528,7 @@ $stats = $conn->query("SELECT
                             <?php if($row['order_status'] == 'Pending'): ?>
                                 <input type="text" name="est_time" placeholder="Est. time (e.g. 15 mins)" required>
                                 <button type="submit" name="status" value="Cooking" class="btn-cook">▶️ Start Cooking</button>
+                                <button type="button" class="btn-reject" onclick="rejectOrder(<?php echo $row['order_id']; ?>)">✗ Reject</button>
                             
                             <?php elseif($row['order_status'] == 'Cooking'): ?>
                                 <button type="submit" name="status" value="Ready" class="btn-ready" style="flex: 1;">✅ Mark Ready</button>
@@ -471,5 +542,26 @@ $stats = $conn->query("SELECT
             </div>
         <?php endif; ?>
     </div>
+
+    <script>
+        function rejectOrder(orderId) {
+            const reason = prompt('Enter rejection reason:');
+            if (reason === null) return; // User cancelled
+            
+            const form = document.createElement('form');
+            form.method = 'POST';
+            form.innerHTML = `
+                <input type="hidden" name="order_id" value="${orderId}">
+                <input type="hidden" name="reject_order" value="1">
+                <input type="hidden" name="reject_reason" value="${reason}">
+            `;
+            document.body.appendChild(form);
+            form.submit();
+        }
+
+        // Auto-refresh every 10 seconds
+        setTimeout(() => location.reload(), 10000);
+    </script>
+
 </body>
 </html>
