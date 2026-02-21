@@ -17,6 +17,14 @@ $top_sql = "SELECT m.*, COUNT(oi.item_id) as popularity
             ORDER BY popularity DESC 
             LIMIT 3";
 $top_result = $conn->query($top_sql);
+$bestseller_ids = [];
+if ($top_result->num_rows > 0) {
+    $top_result->data_seek(0);
+    while($row = $top_result->fetch_assoc()) {
+        $bestseller_ids[] = $row['item_id'];
+    }
+    $top_result->data_seek(0);
+}
 
 // 3. Fetch Full Menu (Categorized)
 $menu_sql = "SELECT * FROM menu_items ORDER BY category, name";
@@ -98,6 +106,120 @@ $menu_result = $conn->query($menu_sql);
             font-weight: bold;
             font-size: 1.1em;
             margin-bottom: 8px;
+        }
+
+        /* Veg/Non-Veg Badge */
+        .veg-badge {
+            display: inline-block;
+            width: 16px;
+            height: 16px;
+            border: 2px solid #28a745;
+            border-radius: 3px;
+            position: relative;
+            vertical-align: middle;
+            margin-right: 5px;
+        }
+        .veg-badge::after {
+            content: '';
+            position: absolute;
+            width: 8px;
+            height: 8px;
+            background: #28a745;
+            border-radius: 50%;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+        }
+        .non-veg-badge {
+            display: inline-block;
+            width: 16px;
+            height: 16px;
+            border: 2px solid #dc3545;
+            border-radius: 3px;
+            position: relative;
+            vertical-align: middle;
+            margin-right: 5px;
+        }
+        .non-veg-badge::after {
+            content: '';
+            position: absolute;
+            width: 0;
+            height: 0;
+            border-left: 5px solid transparent;
+            border-right: 5px solid transparent;
+            border-bottom: 8px solid #dc3545;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+        }
+
+        /* Spice Level */
+        .spice-indicator {
+            font-size: 0.7em;
+            color: #ff4500;
+            margin-left: 5px;
+        }
+
+        /* Bestseller Badge */
+        .bestseller-badge {
+            position: absolute;
+            top: 8px;
+            right: 8px;
+            background: linear-gradient(135deg, #ffd700, #ffed4e);
+            color: #333;
+            font-size: 0.65em;
+            font-weight: bold;
+            padding: 4px 8px;
+            border-radius: 12px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+            z-index: 10;
+        }
+
+        /* Search and Filter Bar */
+        .search-filter-bar {
+            background: white;
+            padding: 15px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+            position: sticky;
+            top: 56px;
+            z-index: 999;
+        }
+        .search-box {
+            width: 100%;
+            padding: 10px 15px;
+            border: 2px solid #ddd;
+            border-radius: 8px;
+            font-size: 0.95em;
+            margin-bottom: 10px;
+        }
+        .search-box:focus {
+            outline: none;
+            border-color: #ff9800;
+        }
+        .filter-buttons {
+            display: flex;
+            gap: 8px;
+            flex-wrap: wrap;
+        }
+        .filter-btn {
+            background: #f0f0f0;
+            border: 2px solid #ddd;
+            padding: 6px 12px;
+            border-radius: 20px;
+            font-size: 0.85em;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        .filter-btn:hover {
+            background: #e0e0e0;
+        }
+        .filter-btn.active {
+            background: #ff9800;
+            color: white;
+            border-color: #ff9800;
+        }
+        .food-card {
+            position: relative;
         }
 
         /* Buttons */
@@ -280,11 +402,22 @@ $menu_result = $conn->query($menu_sql);
         <div class="table-info">Table #<?php echo $table_id; ?></div>
     </div>
 
+    <!-- Search and Filter Bar -->
+    <div class="search-filter-bar">
+        <input type="text" class="search-box" id="searchBox" placeholder="🔍 Search menu items...">
+        <div class="filter-buttons">
+            <button class="filter-btn active" onclick="filterCategory('all')">All</button>
+            <button class="filter-btn" onclick="filterVeg('veg')">🟢 Veg</button>
+            <button class="filter-btn" onclick="filterVeg('non-veg')">🔴 Non-Veg</button>
+        </div>
+    </div>
+
     <div class="section-title">🔥 Bestsellers</div>
     <?php if ($top_result->num_rows > 0): ?>
         <div class="bestseller-grid">
             <?php while($row = $top_result->fetch_assoc()): ?>
                 <div class="food-card">
+                    <span class="bestseller-badge">⭐ Bestseller</span>
                     <?php 
                     $fallback_external = 'https://via.placeholder.com/160?text=No+Image';
                     $localBase = __DIR__ . '/images/menu/' . $row['item_id'];
@@ -302,9 +435,17 @@ $menu_result = $conn->query($menu_sql);
                     ?>
                     <img src="<?php echo htmlspecialchars($relImage); ?>" alt="<?php echo htmlspecialchars($row['name']); ?>">
                     <div class="food-info">
-                        <h3><?php echo $row['name']; ?></h3>
+                        <h3>
+                            <?php if(isset($row['is_veg'])): ?>
+                                <span class="<?php echo $row['is_veg'] ? 'veg-badge' : 'non-veg-badge'; ?>"></span>
+                            <?php endif; ?>
+                            <?php echo $row['name']; ?>
+                            <?php if(isset($row['spice_level']) && $row['spice_level'] > 0): ?>
+                                <span class="spice-indicator"><?php echo str_repeat('🌶️', $row['spice_level']); ?></span>
+                            <?php endif; ?>
+                        </h3>
                         <span class="cat"><?php echo $row['category']; ?></span>
-                        <div class="price">₹<?php echo $row['price']; ?></div>
+                        <div class="price">₹<?php echo number_format($row['price'], 0); ?></div>
                         <a href="add_to_cart.php?id=<?php echo $row['item_id']; ?>" class="add-btn">ADD +</a>
                     </div>
                 </div>
@@ -338,13 +479,24 @@ $menu_result = $conn->query($menu_sql);
         }
         ?>
 
-        <div class="<?php echo $cssClass; ?>">
+        <div class="<?php echo $cssClass; ?>" data-name="<?php echo strtolower($row['name']); ?>" data-category="<?php echo strtolower($row['category']); ?>" data-veg="<?php echo isset($row['is_veg']) ? $row['is_veg'] : 1; ?>">
+            <?php if(in_array($row['item_id'], $bestseller_ids)): ?>
+                <span class="bestseller-badge">⭐ Bestseller</span>
+            <?php endif; ?>
             <img src="<?php echo htmlspecialchars($relImage); ?>" alt="<?php echo htmlspecialchars($row['name']); ?>">
             <div class="food-info">
-                <h3><?php echo $row['name']; ?></h3>
+                <h3>
+                    <?php if(isset($row['is_veg'])): ?>
+                        <span class="<?php echo $row['is_veg'] ? 'veg-badge' : 'non-veg-badge'; ?>"></span>
+                    <?php endif; ?>
+                    <?php echo $row['name']; ?>
+                    <?php if(isset($row['spice_level']) && $row['spice_level'] > 0): ?>
+                        <span class="spice-indicator"><?php echo str_repeat('🌶️', $row['spice_level']); ?></span>
+                    <?php endif; ?>
+                </h3>
                 <span class="cat"><?php echo $row['category']; ?></span>
                 <?php if($row['is_available']): ?>
-                    <div class="price">₹<?php echo $row['price']; ?></div>
+                    <div class="price">₹<?php echo number_format($row['price'], 0); ?></div>
                     <a href="add_to_cart.php?id=<?php echo $row['item_id']; ?>" class="add-btn">ADD +</a>
                 <?php else: ?>
                     <span class="no-stock-badge">OUT OF STOCK</span>
@@ -392,6 +544,71 @@ $menu_result = $conn->query($menu_sql);
                         console.error('Error:', error);
                     });
             }
+        }
+
+        // Search functionality
+        document.getElementById('searchBox').addEventListener('input', function(e) {
+            const searchTerm = e.target.value.toLowerCase();
+            const cards = document.querySelectorAll('.food-grid .food-card');
+            
+            cards.forEach(card => {
+                const name = card.getAttribute('data-name');
+                const category = card.getAttribute('data-category');
+                
+                if (name.includes(searchTerm) || category.includes(searchTerm)) {
+                    card.style.display = 'flex';
+                } else {
+                    card.style.display = 'none';
+                }
+            });
+        });
+
+        let currentFilter = 'all';
+
+        function filterCategory(filter) {
+            currentFilter = filter;
+            updateFilterButtons();
+            applyFilters();
+        }
+
+        function filterVeg(filter) {
+            const cards = document.querySelectorAll('.food-grid .food-card');
+            const buttons = document.querySelectorAll('.filter-btn');
+            
+            // Update button states
+            buttons.forEach(btn => btn.classList.remove('active'));
+            event.target.classList.add('active');
+            
+            cards.forEach(card => {
+                const isVeg = card.getAttribute('data-veg') === '1';
+                
+                if (filter === 'veg' && !isVeg) {
+                    card.style.display = 'none';
+                } else if (filter === 'non-veg' && isVeg) {
+                    card.style.display = 'none';
+                } else {
+                    card.style.display = 'flex';
+                }
+            });
+            
+            // Clear search
+            document.getElementById('searchBox').value = '';
+        }
+
+        function updateFilterButtons() {
+            const buttons = document.querySelectorAll('.filter-btn');
+            buttons.forEach(btn => btn.classList.remove('active'));
+            if (currentFilter === 'all') {
+                buttons[0].classList.add('active');
+            }
+        }
+
+        function applyFilters() {
+            const cards = document.querySelectorAll('.food-grid .food-card');
+            cards.forEach(card => {
+                card.style.display = 'flex';
+            });
+            document.getElementById('searchBox').value = '';
         }
     </script>
 
