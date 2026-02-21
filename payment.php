@@ -20,32 +20,6 @@ if (!$result || $result->num_rows === 0) {
 $order = $result->fetch_assoc();
 $amount = $order['total_amount'];
 $table_id = $order['table_id'];
-
-// Razorpay Keys (Replace with your actual keys from Razorpay Dashboard)
-// Get from: https://dashboard.razorpay.com/settings/api-keys
-// For testing: Use provided test keys
-$razorpay_key = 'rzp_test_1IfboxQnxM4G6w'; // Replace with your actual key
-$razorpay_secret = 'nxrHnLj1E0sQ8L0jFwxX1234'; // Replace with your actual secret (keep secret!)
-
-// Generate unique receipt ID
-$receipt_id = "PS_CAFE_" . $order_id . "_" . time();
-
-// Payment data
-$payment_data = array(
-    'key' => $razorpay_key,
-    'amount' => $amount * 100, // Convert to paise (smallest unit in INR)
-    'currency' => 'INR',
-    'order_id' => $order_id,
-    'description' => "P&S Cafe - Order #$order_id",
-    'prefill' => array(
-        'contact' => '9099099090',
-        'email' => 'customer@pscafe.com',
-    ),
-    'notes' => array(
-        'table_id' => $table_id,
-        'order_id' => $order_id,
-    )
-);
 ?>
 
 <!DOCTYPE html>
@@ -53,8 +27,7 @@ $payment_data = array(
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Secure Payment | P&S Cafe</title>
-    <script src="https://checkout.razorpay.com/v1/checkout.js"></script>
+    <title>Payment | P&S Cafe</title>
     <style>
         * {
             margin: 0;
@@ -230,23 +203,6 @@ $payment_data = array(
             background: #d0d0d0;
         }
 
-        .security-badges {
-            display: flex;
-            justify-content: center;
-            gap: 15px;
-            margin-top: 20px;
-            padding-top: 20px;
-            border-top: 1px solid #e0e0e0;
-            font-size: 0.85em;
-            color: #666;
-        }
-
-        .badge {
-            display: flex;
-            align-items: center;
-            gap: 5px;
-        }
-
         @media (max-width: 480px) {
             .payment-container {
                 margin: 0;
@@ -256,16 +212,16 @@ $payment_data = array(
                 padding: 20px;
             }
 
-            .payment-body {
+            .payment-content {
                 padding: 20px;
             }
 
-            .method-grid {
+            .button-group {
                 grid-template-columns: 1fr;
             }
 
-            .button-group {
-                flex-direction: column;
+            .proceed-btn {
+                grid-column: span 1;
             }
         }
     </style>
@@ -273,143 +229,77 @@ $payment_data = array(
 <body>
     <div class="payment-container">
         <div class="payment-header">
-            <h1>☕ P&S Cafe</h1>
-            <p>Secure Payment</p>
+            <h1>💳 Payment Confirmation</h1>
+            <p>Secure Payment Processing</p>
         </div>
 
-        <div class="payment-body">
-            <div class="order-summary">
-                <div class="summary-row">
-                    <label>Order ID</label>
-                    <span>#<?php echo $order_id; ?></span>
-                </div>
-                <div class="summary-row">
-                    <label>Table Number</label>
-                    <span><?php echo $table_id; ?></span>
-                </div>
-                <div class="summary-row">
-                    <label>Amount</label>
-                    <span>₹<?php echo number_format($amount, 0); ?></span>
-                </div>
-                <div class="summary-row total">
-                    <label>Total Due</label>
-                    <span>₹<?php echo number_format($amount, 0); ?></span>
-                </div>
+        <div class="payment-content">
+            <div class="order-info">
+                <label>Order ID</label>
+                <div class="value">#<?php echo $order_id; ?></div>
+                
+                <label>Table Number</label>
+                <div class="value"><?php echo $table_id; ?></div>
             </div>
 
-            <div class="info-box">
-                🔒 Your payment is secure and encrypted with Razorpay
+            <div class="amount-section">
+                <div class="amount-label">Total Amount</div>
+                <div class="amount">₹<?php echo number_format($amount, 2); ?></div>
             </div>
 
-            <form id="paymentForm">
-                <div class="payment-methods">
-                    <h3>💳 Choose Payment Method</h3>
-                    <div class="method-grid">
-                        <div class="payment-method">
-                            <input type="radio" id="card" name="payment_method" value="card" checked>
-                            <label for="card">💳</label>
-                            <div class="method-name">Debit/Credit Card</div>
-                        </div>
+            <div class="payment-method">
+                <div class="method">💰 Cash Payment</div>
+                <p style="font-size: 0.9em; margin-top: 5px;">Payment to be collected at counter</p>
+            </div>
 
-                        <div class="payment-method">
-                            <input type="radio" id="upi" name="payment_method" value="upi">
-                            <label for="upi">📱</label>
-                            <div class="method-name">UPI</div>
-                        </div>
-
-                        <div class="payment-method">
-                            <input type="radio" id="wallet" name="payment_method" value="wallet">
-                            <label for="wallet">💰</label>
-                            <div class="method-name">Wallet</div>
-                        </div>
-
-                        <div class="payment-method">
-                            <input type="radio" id="netbanking" name="payment_method" value="netbanking">
-                            <label for="netbanking">🏦</label>
-                            <div class="method-name">Net Banking</div>
-                        </div>
-                    </div>
-                </div>
-
+            <form id="paymentForm" method="POST" action="verify_payment.php">
+                <input type="hidden" name="order_id" value="<?php echo $order_id; ?>">
+                
                 <div class="button-group">
-                    <a href="track_order.php" class="btn btn-secondary">← Back</a>
-                    <button type="button" class="btn btn-primary" onclick="processPayment()">Pay ₹<?php echo number_format($amount, 0); ?></button>
+                    <button type="button" class="cancel-btn" onclick="goBack()">❌ Cancel</button>
+                    <button type="submit" class="proceed-btn">✅ Confirm Payment</button>
                 </div>
             </form>
 
-            <div class="security-badges">
-                <div class="badge">🔒 SSL Encrypted</div>
-                <div class="badge">✓ Verified</div>
-                <div class="badge">🛡️ Safe</div>
+            <div class="security-note">
+                <strong>✓ Secure</strong> - Your payment information is safe
+            </div>
+
+            <div class="info-box">
+                <strong>ℹ️ Payment Instructions:</strong>
+                <p style="margin-top: 10px;">Please pay ₹<?php echo number_format($amount, 2); ?> at the counter. Click "Confirm Payment" to mark this order as paid.</p>
             </div>
         </div>
     </div>
 
     <script>
-        function processPayment() {
-            const options = {
-                "key": "<?php echo $razorpay_key; ?>",
-                "amount": <?php echo $amount * 100; ?>,
-                "currency": "INR",
-                "name": "P&S Cafe",
-                "description": "Order #<?php echo $order_id; ?>",
-                "image": "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ctext x='50' y='70' font-size='70' text-anchor='middle'%3E☕%3C/text%3E%3C/svg%3E",
-                "order_id": "<?php echo $receipt_id; ?>",
-                "handler": function (response) {
-                    verifyPayment(response.razorpay_payment_id, response.razorpay_order_id, response.razorpay_signature);
-                },
-                "prefill": {
-                    "name": "Customer",
-                    "contact": "9099099090",
-                    "email": "customer@pscafe.com"
-                },
-                "notes": {
-                    "table_id": "<?php echo $table_id; ?>",
-                    "order_id": "<?php echo $order_id; ?>"
-                },
-                "theme": {
-                    "color": "#667eea"
-                },
-                "modal": {
-                    "ondismiss": function() {
-                        alert("Payment window closed. Please try again.");
+        function goBack() {
+            window.history.back();
+        }
+
+        document.getElementById('paymentForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            // Show confirmation
+            if (confirm('✅ Confirm payment of ₹<?php echo number_format($amount, 2); ?> for Order #<?php echo $order_id; ?>?')) {
+                // Submit form
+                fetch('verify_payment.php', {
+                    method: 'POST',
+                    body: new FormData(this)
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        alert('✅ Payment Recorded Successfully!\nYour order is being prepared.');
+                        window.location.href = 'track_order.php';
+                    } else {
+                        alert('❌ Error: ' + data.message);
                     }
-                }
-            };
-
-            const rzp = new Razorpay(options);
-            rzp.open();
-        }
-
-        function verifyPayment(paymentId, orderId, signature) {
-            // Send payment verification to server
-            fetch('verify_payment.php', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/x-www-form-urlencoded',
-                },
-                body: 'order_id=<?php echo $order_id; ?>&payment_id=' + paymentId + '&order_id_razorpay=' + orderId + '&signature=' + signature
-            })
-            .then(response => response.json())
-            .then(data => {
-                if (data.success) {
-                    alert('✅ Payment Successful!\nYour order is being prepared.');
-                    window.location.href = 'track_order.php';
-                } else {
-                    alert('❌ Payment verification failed. Please contact support.');
-                }
-            })
-            .catch(error => {
-                console.error('Error:', error);
-                alert('Payment processing error. Please try again.');
-            });
-        }
-
-        // Allow Enter key to trigger payment
-        document.getElementById('paymentForm').addEventListener('keypress', function(e) {
-            if (e.key === 'Enter') {
-                e.preventDefault();
-                processPayment();
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                    alert('Payment processing error. Please try again.');
+                });
             }
         });
     </script>
