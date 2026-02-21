@@ -353,8 +353,9 @@ if ($active_index === false) $active_index = 0;
 
                 </div>
 
-                <div style="margin-top:12px; display:flex; gap:8px; justify-content:center; align-items:center">
+                <div style="margin-top:12px; display:flex; gap:8px; justify-content:center; align-items:center; flex-wrap:wrap;">
                     <button id="printReceipt" class="btn btn-ghost" style="border-radius:10px; padding:8px 12px;">🖨️ Print Receipt</button>
+                    <a href="bill.php?order_id=<?php echo $order_id; ?>" class="btn btn-pay" style="border-radius:10px; padding:8px 12px; text-align:center;">💵 View Bill</a>
                     <button id="downloadPdf" class="btn btn-pay" style="border-radius:10px; padding:8px 12px;">📥 Download (PDF)</button>
                 </div>
 
