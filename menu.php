@@ -29,6 +29,14 @@ if ($top_result->num_rows > 0) {
 // 3. Fetch Full Menu (Categorized)
 $menu_sql = "SELECT * FROM menu_items ORDER BY category, name";
 $menu_result = $conn->query($menu_sql);
+
+// 4. Calculate total cart items
+$cart_count = 0;
+if (isset($_SESSION['cart']) && !empty($_SESSION['cart'])) {
+    foreach ($_SESSION['cart'] as $quantity) {
+        $cart_count += $quantity;
+    }
+}
 ?>
 
 <!DOCTYPE html>
@@ -235,6 +243,8 @@ $menu_result = $conn->query($menu_sql);
             font-size: 0.85em;
             width: 100%;
             transition: background 0.3s;
+            margin-top: auto;
+            display: block;
         }
         .add-btn:hover { 
             background: #e68900; 
@@ -297,6 +307,7 @@ $menu_result = $conn->query($menu_sql);
         .float-cart-btn {
             background: #333;
             color: white;
+            position: relative;
         }
         .float-cart-btn:active {
             transform: scale(0.95);
@@ -500,7 +511,7 @@ $menu_result = $conn->query($menu_sql);
                     <a href="add_to_cart.php?id=<?php echo $row['item_id']; ?>" class="add-btn">ADD +</a>
                 <?php else: ?>
                     <span class="no-stock-badge">OUT OF STOCK</span>
-                    <button disabled style="background:#ccc; border:none; padding:8px 12px; border-radius:6px; color:white; margin-top:8px; width:100%; cursor:not-allowed;">Sold Out</button>
+                    <button disabled style="background:#ccc; border:none; padding:8px 12px; border-radius:6px; color:white; margin-top:auto; width:100%; cursor:not-allowed; display:block;">Sold Out</button>
                 <?php endif; ?>
             </div>
         </div>
@@ -512,6 +523,9 @@ $menu_result = $conn->query($menu_sql);
     <div class="float-action-bar">
         <a href="cart.php" class="float-btn float-cart-btn">
             🛒 View Cart
+            <?php if ($cart_count > 0): ?>
+                <span class="notification-badge"><?php echo $cart_count; ?></span>
+            <?php endif; ?>
         </a>
         <button class="float-btn float-bell-btn" id="bellBtn" onclick="callStaff()">
             🔔 Call Staff
