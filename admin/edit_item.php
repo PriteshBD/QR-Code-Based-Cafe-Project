@@ -150,8 +150,9 @@ if (isset($_POST['update_item'])) {
             font-size: 0.9em;
         }
     </style>
+    <link rel="stylesheet" href="admin_styles.css">
 </head>
-<body>
+<body class="admin-ui">
     <div class="container">
         <h1>✏️ Edit Menu Item</h1>
         

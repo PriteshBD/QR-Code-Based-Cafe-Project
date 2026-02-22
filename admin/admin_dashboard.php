@@ -29,7 +29,7 @@ if (isset($_POST['add_staff'])) {
     $role = $_POST['role'];
     $phone = $_POST['phone'];
     $salary = $_POST['salary'];
-    $conn->query("INSERT INTO staff (name, role, phone, salary_per_day) VALUES ('$name', '$role', '$phone', '$salary')");
+    $conn->query("INSERT INTO staff (name, role, phone, salary, join_date) VALUES ('$name', '$phone', '$role', '$salary', CURDATE())");
     header("Location: admin_dashboard.php");
 }
 
@@ -61,19 +61,10 @@ if (isset($_POST['mark_all_absent'])) {
 <html lang="en">
 <head>
     <title>Admin Dashboard | P&S Cafe</title>
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script> <style>
-        body { font-family: 'Segoe UI', sans-serif; margin: 0; display: flex; background: #f4f6f9; }
-        
-        /* Sidebar */
-        .sidebar { width: 250px; background: #343a40; color: white; min-height: 100vh; padding: 20px; }
-        .sidebar h2 { text-align: center; color: #ff9800; }
-        .menu-item { display: block; padding: 15px; color: #ccc; text-decoration: none; border-bottom: 1px solid #4b545c; }
-        .menu-item:hover { background: #494e53; color: white; }
-
-        /* Content */
-        .content { flex: 1; padding: 20px; }
-        
-        /* Stats Cards */
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <link rel="stylesheet" href="admin_styles.css">
+    <style>
+        /* Dashboard specific styles */
         .stats-grid { display: flex; gap: 20px; margin-bottom: 30px; }
         .stat-card { flex: 1; background: white; padding: 20px; border-radius: 8px; box-shadow: 0 2px 5px rgba(0,0,0,0.1); border-left: 5px solid #28a745; }
         
@@ -88,18 +79,23 @@ if (isset($_POST['mark_all_absent'])) {
         button { padding: 8px 15px; background: #007bff; color: white; border: none; cursor: pointer; }
     </style>
 </head>
-<body>
+<body class="admin-ui">
 
     <div class="sidebar">
-        <h2>P&S Admin</h2>
-        <a href="#" class="menu-item">📊 Dashboard</a>
-        <a href="view_orders.php" class="menu-item">📦 View Orders</a>
-        <a href="generate_qr.php" class="menu-item">🎯 Generate QR Codes</a>
-        <a href="manage_menu.php" class="menu-item">📋 Manage Menu</a>
-        <a href="staff_management.php" class="menu-item">👥 Manage Staff</a>
-        <a href="../menu.php" target="_blank" class="menu-item">📱 View Live Menu</a>
-        <a href="../staff/staff_login.php" target="_blank" class="menu-item">👨‍🍳 Kitchen View</a>
-        <a href="../logout.php" class="menu-item">🚪 Logout</a>
+        <div class="logo">
+            <h2>🍽️ P&S Cafe</h2>
+            <p>Admin Panel</p>
+        </div>
+        <nav>
+            <a href="admin_dashboard.php" class="active">📊 Dashboard</a>
+            <a href="manage_menu.php">🍕 Manage Menu</a>
+            <a href="view_orders.php">📋 View Orders</a>
+            <a href="staff_management.php">👥 Staff</a>
+            <a href="generate_qr.php">🔲 Table QR Codes</a>
+            <a href="generate_staff_qr.php">🆔 Staff QR Codes</a>
+            <a href="inventory_tracking.php">📦 Inventory</a>
+        </nav>
+        <a href="../logout.php" class="logout-link">🚪 Logout</a>
     </div>
 
     <div class="content">
@@ -120,6 +116,15 @@ if (isset($_POST['mark_all_absent'])) {
                 <h3>Top Seller</h3>
                 <h1><?php echo !empty($item_names) ? $item_names[0] : 'N/A'; ?></h1>
             </div>
+        </div>
+
+        <div style="margin: 20px 0; display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 12px;">
+            <a href="../staff/payment_approval.php" style="background: #667eea; color: white; padding: 15px; text-align: center; border-radius: 8px; text-decoration: none; font-weight: bold; transition: all 0.3s;">
+                💳 Payment Approvals
+            </a>
+            <a href="../kitchen_display_system.php" style="background: #ff6b35; color: white; padding: 15px; text-align: center; border-radius: 8px; text-decoration: none; font-weight: bold; transition: all 0.3s;" target="_blank">
+                🎯 Kitchen Display
+            </a>
         </div>
 
         <div style="background:white; padding:20px; border-radius:8px; margin-bottom:30px;">
@@ -147,7 +152,7 @@ if (isset($_POST['mark_all_absent'])) {
                 <input type="text" name="name" placeholder="Name" required>
                 <select name="role"><option>Chef</option><option>Waiter</option><option>Cleaner</option></select>
                 <input type="text" name="phone" placeholder="Phone" required>
-                <input type="number" name="salary" placeholder="Salary/Day" required>
+                <input type="number" name="salary" placeholder="Salary/Month" required>
                 <button type="submit" name="add_staff">Add Staff</button>
             </form>
 

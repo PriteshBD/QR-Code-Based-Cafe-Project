@@ -3,7 +3,7 @@ session_start();
 include '../includes/db_connect.php';
 
 if (!isset($_SESSION['admin_logged_in'])) {
-    header("Location: ../admin/admin_login.php");
+    header("Location: admin_login.php");
     exit();
 }
 
@@ -21,12 +21,35 @@ if (isset($_POST['add_staff'])) {
     exit();
 }
 
+// Handle Update Staff
+if (isset($_POST['update_staff'])) {
+    $staff_id = (int)$_POST['staff_id'];
+    $name = $conn->real_escape_string($_POST['name']);
+    $phone = $conn->real_escape_string($_POST['phone']);
+    $role = $conn->real_escape_string($_POST['role']);
+    $salary = (float)$_POST['salary'];
+    $join_date = $_POST['join_date'];
+    
+    $sql = "UPDATE staff SET name='$name', phone='$phone', role='$role', salary=$salary, join_date='$join_date' WHERE staff_id=$staff_id";
+    $conn->query($sql);
+    header("Location: staff_management.php?success=updated");
+    exit();
+}
+
 // Handle Delete Staff
 if (isset($_GET['delete'])) {
     $staff_id = (int)$_GET['delete'];
     $conn->query("DELETE FROM staff WHERE staff_id=$staff_id");
     header("Location: staff_management.php?success=deleted");
     exit();
+}
+
+// Fetch staff to edit if requested
+$edit_staff = null;
+if (isset($_GET['edit'])) {
+    $staff_id = (int)$_GET['edit'];
+    $edit_result = $conn->query("SELECT * FROM staff WHERE staff_id=$staff_id");
+    $edit_staff = $edit_result->fetch_assoc();
 }
 
 // Fetch all staff
@@ -181,10 +204,16 @@ $stats = $conn->query("
             background: #c82333;
         }
         
-        table {
-            width: 100%;
-            border-collapse: collapse;
-            margin-top: 20px;
+        .btn-edit {
+            background: #007bff;
+            color: white;
+            padding: 6px 12px;
+            font-size: 0.85em;
+            margin-right: 5px;
+        }
+        
+        .btn-edit:hover {
+            background: #0056b3;
         }
         
         th, td {
@@ -226,11 +255,15 @@ $stats = $conn->query("
             }
         }
     </style>
+    <link rel="stylesheet" href="admin_styles.css">
 </head>
-<body>
+<body class="admin-ui">
     <div class="header">
         <h1>👥 Staff Management</h1>
-        <a href="../admin/admin_dashboard.php" class="back-btn">← Back to Admin</a>
+        <div style="display: flex; gap: 10px;">
+            <a href="generate_staff_qr.php" class="back-btn" style="background: #4caf50; border-color: #4caf50;">🆔 Staff QR Codes</a>
+            <a href="../admin/admin_dashboard.php" class="back-btn">← Back to Admin</a>
+        </div>
     </div>
     
     <?php if(isset($_GET['success'])): ?>
@@ -254,32 +287,40 @@ $stats = $conn->query("
         </div>
     </div>
     
-    <div class="container">
-        <h2>➕ Add New Staff Member</h2>
+    <div class="container" id="edit-form">
+        <h2><?php echo $edit_staff ? '✏️ Edit Staff Member' : '➕ Add New Staff Member'; ?></h2>
         <form method="POST">
+            <?php if($edit_staff): ?>
+                <input type="hidden" name="staff_id" value="<?php echo $edit_staff['staff_id']; ?>">
+                <div style="margin-bottom: 15px;">
+                    <a href="staff_management.php" class="btn" style="background: #6c757d; color: white; padding: 10px 20px;">← Back to List</a>
+                </div>
+            <?php endif; ?>
             <div class="form-grid">
                 <div class="form-group">
                     <label>Name</label>
-                    <input type="text" name="name" required>
+                    <input type="text" name="name" value="<?php echo $edit_staff ? htmlspecialchars($edit_staff['name']) : ''; ?>" required>
                 </div>
                 <div class="form-group">
                     <label>Phone Number</label>
-                    <input type="text" name="phone" required>
+                    <input type="text" name="phone" value="<?php echo $edit_staff ? htmlspecialchars($edit_staff['phone']) : ''; ?>" required>
                 </div>
                 <div class="form-group">
                     <label>Role</label>
-                    <input type="text" name="role" placeholder="e.g. Chef, Sous Chef" required>
+                    <input type="text" name="role" placeholder="e.g. Chef, Sous Chef" value="<?php echo $edit_staff ? htmlspecialchars($edit_staff['role']) : ''; ?>" required>
                 </div>
                 <div class="form-group">
-                    <label>Salary (₹)</label>
-                    <input type="number" step="0.01" name="salary" required>
+                    <label>Salary (₹/Month)</label>
+                    <input type="number" step="0.01" name="salary" value="<?php echo $edit_staff ? $edit_staff['salary'] : ''; ?>" required>
                 </div>
             </div>
             <div class="form-group">
                 <label>Join Date</label>
-                <input type="date" name="join_date" required>
+                <input type="date" name="join_date" value="<?php echo $edit_staff ? $edit_staff['join_date'] : ''; ?>" required>
             </div>
-            <button type="submit" name="add_staff" class="btn btn-add">Add Staff Member</button>
+            <button type="submit" name="<?php echo $edit_staff ? 'update_staff' : 'add_staff'; ?>" class="btn btn-add">
+                <?php echo $edit_staff ? 'Update Staff Member' : 'Add Staff Member'; ?>
+            </button>
         </form>
     </div>
     
@@ -311,6 +352,7 @@ $stats = $conn->query("
                         <td>₹<?php echo number_format($staff['salary'], 2); ?></td>
                         <td><?php echo date('d M, Y', strtotime($staff['join_date'])); ?></td>
                         <td>
+                            <a href="?edit=<?php echo $staff['staff_id']; ?>#edit-form" class="btn btn-edit">Edit</a>
                             <a href="?delete=<?php echo $staff['staff_id']; ?>" 
                                class="btn btn-delete"
                                onclick="return confirm('Delete this staff member?')">Delete</a>

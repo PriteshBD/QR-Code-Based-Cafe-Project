@@ -32,8 +32,9 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         input { width: 100%; padding: 10px; margin: 10px 0; }
         button { width: 100%; padding: 10px; background: #e74c3c; color: white; border: none; cursor: pointer; }
     </style>
+    <link rel="stylesheet" href="admin_styles.css">
 </head>
-<body>
+<body class="admin-ui">
     <div class="login-box">
         <h2>🔒 Admin Access</h2>
         <?php if(isset($error)) echo "<p style='color:red'>$error</p>"; ?>

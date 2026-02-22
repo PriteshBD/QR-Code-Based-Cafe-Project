@@ -21,7 +21,7 @@ $use_ip = $custom_ip ?: $server_ip;
 
 // Configuration
 $base_url = "http://" . $use_ip . "/QR_Code_Based_Cafe_Project/menu.php?table_id=";
-$num_tables = isset($_GET['tables']) ? (int)$_GET['tables'] : 20; // Default 20 tables
+$num_tables = isset($_GET['tables']) ? min((int)$_GET['tables'], 10) : 10; // Fixed 10 tables max
 $mode = isset($_GET['mode']) ? $_GET['mode'] : 'ip'; // 'localhost' or 'ip'
 
 if ($mode == 'localhost') {
@@ -166,15 +166,17 @@ if ($mode == 'localhost') {
             }
         }
     </style>
+    <link rel="stylesheet" href="admin_styles.css">
 </head>
-<body>
+<body class="admin-ui">
     <div class="header no-print">
         <div>
             <h1 style="margin: 0;">🎯 Table QR Code Generator</h1>
-            <p style="margin: 5px 0 0 0; color: #666;">Generate QR codes for customers to scan and order</p>
+            <p style="margin: 5px 0 0 0; color: #666;">Generate QR codes for customers to scan and order (Max: 10 tables)</p>
         </div>
         <div>
             <button onclick="window.print()" class="btn btn-success">🖨️ Print All</button>
+            <a href="generate_staff_qr.php" class="btn">🆔 Staff QR Codes</a>
             <a href="admin_dashboard.php" class="btn">← Back to Dashboard</a>
         </div>
     </div>
@@ -259,8 +261,8 @@ if ($mode == 'localhost') {
     <div style="text-align: center; margin-top: 40px;" class="no-print">
         <form action="" method="GET" style="display: inline-block;">
             <label for="tables">Generate for </label>
-            <input type="number" name="tables" id="tables" value="<?php echo $num_tables; ?>" min="1" max="100" style="width: 60px; padding: 5px;">
-            <label> tables</label>
+            <input type="number" name="tables" id="tables" value="<?php echo $num_tables; ?>" min="1" max="10" style="width: 60px; padding: 5px;">
+            <label> tables (Max: 10)</label>
             <button type="submit" class="btn">Generate</button>
         </form>
     </div>
