@@ -30,7 +30,6 @@ QR_Code_Based_Cafe_Project/
 │   ├── edit_item.php                     # Edit specific menu item
 │   ├── generate_qr.php                   # Generate QR codes for tables
 │   ├── view_orders.php                   # View all orders
-│   ├── inventory_tracking.php            # Track inventory levels
 │   ├── staff_management.php              # Manage staff members
 │   └── mark_absent.php                   # Mark staff attendance
 │

@@ -291,7 +291,7 @@ $table_id = $order['table_id'];
                 .then(data => {
                     if (data.success) {
                         alert('✅ Payment Recorded Successfully!\nYour order is being prepared.');
-                        window.location.href = 'track_order.php';
+                        window.location.href = 'menu.php';
                     } else {
                         alert('❌ Error: ' + data.message);
                     }

@@ -51,7 +51,17 @@ $total = $subtotal + $tax;
 // Handle email if requested
 if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['email'])) {
     $email = sanitize_email($_POST['email']);
-    $bill_html = ob_get_clean();
+    // Build the bill HTML for email
+    $bill_html = "<h2>P&S Cafe - Bill</h2>";
+    $bill_html .= "<p>Order #$order_id</p>";
+    $bill_html .= "<table border='1'><tr><th>Item</th><th>Qty</th><th>Price</th><th>Total</th></tr>";
+    foreach ($items_list as $item) {
+        $bill_html .= "<tr><td>" . htmlspecialchars($item['name']) . "</td><td>" . $item['quantity'] . "</td><td>₹" . number_format($item['price'], 2) . "</td><td>₹" . number_format($item['subtotal'], 2) . "</td></tr>";
+    }
+    $bill_html .= "</table>";
+    $bill_html .= "<p>Subtotal: ₹" . number_format($subtotal, 2) . "</p>";
+    $bill_html .= "<p>Tax (5%): ₹" . number_format($tax, 2) . "</p>";
+    $bill_html .= "<p><strong>Total: ₹" . number_format($total, 2) . "</strong></p>";
     
     $subject = "Your Bill - P&S Cafe - Order #$order_id";
     $headers = "MIME-Version: 1.0" . "\r\n" . "Content-type: text/html; charset=UTF-8" . "\r\n";
