@@ -143,8 +143,9 @@ $stats = $conn->query("SELECT
             border-radius: 5px;
         }
     </style>
+    <link rel="stylesheet" href="admin_styles.css">
 </head>
-<body>
+<body class="admin-ui">
     <div class="header">
         <h1 style="margin: 0;">📦 Orders Management</h1>
         <a href="admin_dashboard.php" class="btn btn-secondary">← Back to Dashboard</a>
@@ -203,7 +204,6 @@ $stats = $conn->query("SELECT
                     <th>Status</th>
                     <th>Payment</th>
                     <th>Time</th>
-                    <th>Actions</th>
                 </tr>
             </thead>
             <tbody>
@@ -225,14 +225,11 @@ $stats = $conn->query("SELECT
                             </span>
                         </td>
                         <td><?php echo date('H:i', strtotime($order['created_at'])); ?></td>
-                        <td>
-                            <a href="view_order.php?id=<?php echo $order['order_id']; ?>" class="btn btn-primary">View</a>
-                        </td>
                     </tr>
                     <?php endwhile; ?>
                 <?php else: ?>
                     <tr>
-                        <td colspan="8" style="text-align: center; padding: 40px; color: #999;">
+                        <td colspan="7" style="text-align: center; padding: 40px; color: #999;">
                             No orders found for the selected filters.
                         </td>
                     </tr>

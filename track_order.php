@@ -30,7 +30,7 @@ $status_map = [
     'pending' => 'Pending',
     'cooking' => 'Cooking',
     'ready' => 'Ready',
-    'served' => 'Ready',
+    'served' => 'Served',
     'rejected' => 'Rejected'
 ];
 $status = isset($status_map[$status_raw]) ? $status_map[$status_raw] : ucfirst($status_raw);
@@ -80,7 +80,7 @@ $discount = isset($order['discount']) ? number_format((float)$order['discount'],
 $calculated_total = number_format((float)$subtotal + (float)$tax - (float)$discount, 2, '.', '');
 
 // Steps for stepper
-$steps = ['Pending', 'Cooking', 'Ready'];
+$steps = ['Pending', 'Cooking', 'Ready', 'Served'];
 $active_index = array_search($status, $steps);
 if ($active_index === false) $active_index = 0;
 ?>
@@ -144,6 +144,7 @@ if ($active_index === false) $active_index = 0;
         .step.pending .dot{background:var(--warning); color:#fff}
         .step.cooking .dot{background:var(--info); color:#fff}
         .step.ready .dot{background:var(--success); color:#fff}
+        .step.served .dot{background:#10b981; color:#fff}
 
         /* cards are now high-contrast for readability */
         .card{background: rgba(255,255,255,0.98); border-radius:12px; padding:16px; color:var(--card-text); box-shadow: 0 6px 18px rgba(2,6,23,0.08);}
@@ -184,6 +185,7 @@ if ($active_index === false) $active_index = 0;
         .banner-pending{border-left:4px solid var(--warning)}
         .banner-cooking{border-left:4px solid var(--info)}
         .banner-ready{border-left:4px solid var(--success)}
+        .banner-served{border-left:4px solid #10b981}
         .banner-rejected{border-left:4px solid var(--danger)}
 
         /* Print styles */
@@ -251,7 +253,9 @@ if ($active_index === false) $active_index = 0;
                         <?php elseif ($status == 'Cooking'): ?>
                             Your order is being prepared. ETA: <?php echo htmlspecialchars($order['estimated_time'] ?? '—'); ?>
                         <?php elseif ($status == 'Ready'): ?>
-                            Your order is ready. Please collect it from the counter. Thank you!
+                            Your order is ready. Waiter will serve it shortly. Thank you!
+                        <?php elseif ($status == 'Served'): ?>
+                            ✅ Your order has been delivered to your table. Enjoy your meal!
                         <?php elseif ($status == 'Rejected'): ?>
                             Order was canceled. Please approach the counter for assistance.
                         <?php else: ?>
@@ -320,22 +324,10 @@ if ($active_index === false) $active_index = 0;
                         </div>
 
                         <div style="margin-top:12px">
-                            <a href="#" class="btn btn-pay" id="openUpi">Open in UPI</a>
-                            <a href="#" class="btn btn-ghost" id="copyUpi">Copy UPI</a>
+                            <a href="#" class="btn btn-pay" id="upiPaidBtn" style="display:block; text-align:center; padding:12px; background:#667eea;">✅ Paid by UPI</a>
+                            <a href="payment.php?order_id=<?php echo $order_id; ?>" class="btn btn-pay" style="display:block; text-align:center; padding:12px; margin-top:8px;">💵 Proceed to Payment (Cash)</a>
+                            <a href="#" class="btn btn-ghost" id="copyUpi" style="display:block; text-align:center; padding:12px; margin-top:8px;">📋 Copy UPI</a>
                         </div>
-
-                        <!-- Demo Payment Options (Always visible for degree project demonstration) -->
-                        <div style="margin-top:16px; padding:12px; background:rgba(33,150,243,0.08); border-radius:10px; border:1px dashed #2196F3;">
-                            <div style="font-size:0.9rem; font-weight:600; color:#2196F3; margin-bottom:8px;">🎓 Demo Payment Options</div>
-                            <div style="font-size:0.85rem; color:var(--muted); margin-bottom:10px;">For demonstration purposes only</div>
-                            <div style="display:flex; flex-direction:column; gap:8px;">
-                                <a href="simulate_payment.php?order_id=<?php echo $order_id; ?>&demo=1&payment_method=Cash" class="btn" style="background:#4CAF50; color:#fff; padding:10px; text-align:center;" onclick="return confirm('✅ Confirm Cash Payment?\n\nThis will mark the order as PAID and move it to the kitchen.');">💵 Pay with Cash (Demo)</a>
-                                <a href="simulate_payment.php?order_id=<?php echo $order_id; ?>&demo=1&payment_method=Card" class="btn" style="background:#FF9800; color:#fff; padding:10px; text-align:center;" onclick="return confirm('✅ Confirm Card Payment?\n\nThis will mark the order as PAID and move it to the kitchen.');">💳 Pay with Card (Demo)</a>
-                                <a href="simulate_payment.php?order_id=<?php echo $order_id; ?>&demo=1&payment_method=UPI" class="btn btn-ghost" style="padding:10px; text-align:center; background:rgba(0,0,0,0.05);" onclick="return confirm('✅ Confirm UPI Payment?\n\nThis will mark the order as PAID and move it to the kitchen.');">📱 Pay with UPI (Demo)</a>
-                            </div>
-                        </div>
-
-                        <div style="margin-top:10px; font-size:0.88rem; color:var(--muted)">Real UPI: Scan QR or click "Open in UPI". For demo: Use buttons above.</div>
 
                     <?php elseif ($status == 'Cooking'): ?>
                         <div style="font-weight:700; font-size:1.05rem">Preparing your order</div>
@@ -426,6 +418,30 @@ if ($active_index === false) $active_index = 0;
                 navigator.clipboard?.writeText(text).then(()=>{
                     alert('UPI and amount copied to clipboard');
                 }).catch(()=>{ alert('Could not copy to clipboard'); });
+            });
+
+            document.getElementById('upiPaidBtn')?.addEventListener('click', function(e){
+                e.preventDefault();
+                if (confirm(`✅ Confirm UPI Payment?\n\nAmount: ₹${amount}\n\nThis will mark your order as PAID.`)) {
+                    fetch('verify_payment.php', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+                        body: 'order_id=<?php echo $order_id; ?>&payment_method=UPI'
+                    })
+                    .then(response => response.json())
+                    .then(data => {
+                        if (data.success) {
+                            alert('✅ Payment Recorded Successfully!\nYour order is being prepared.');
+                            window.location.href = 'menu.php';
+                        } else {
+                            alert('❌ Error: ' + data.message);
+                        }
+                    })
+                    .catch(error => {
+                        console.error('Error:', error);
+                        alert('Payment processing error. Please try again.');
+                    });
+                }
             });
 
             // Theme selector (persisted)

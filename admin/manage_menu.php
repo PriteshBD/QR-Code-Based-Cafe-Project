@@ -193,8 +193,9 @@ $cat_result = $conn->query("SELECT DISTINCT category FROM menu_items ORDER BY ca
             font-size: 1.5em;
         }
     </style>
+    <link rel="stylesheet" href="admin_styles.css">
 </head>
-<body>
+<body class="admin-ui">
     <div class="header">
         <h1 style="margin: 0;">📋 Menu Management</h1>
         <a href="admin_dashboard.php" class="btn btn-secondary">← Back to Dashboard</a>
