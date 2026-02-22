@@ -169,6 +169,22 @@ if ($mode == 'localhost') {
     <link rel="stylesheet" href="admin_styles.css">
 </head>
 <body class="admin-ui">
+    <div class="sidebar">
+        <div class="logo">
+            <h2>🍽️ P&S Cafe</h2>
+            <p>Admin Panel</p>
+        </div>
+        <nav>
+            <a href="admin_dashboard.php">📊 Dashboard</a>
+            <a href="manage_menu.php">🍕 Manage Menu</a>
+            <a href="view_orders.php">📋 View Orders</a>
+            <a href="staff_management.php">👥 Staff</a>
+            <a href="generate_qr.php" class="active">🔲 Table QR</a>
+            <a href="generate_staff_qr.php">🆔 Staff QR</a>
+        </nav>
+        <a href="../logout.php" class="logout-link">🚪 Logout</a>
+    </div>
+    <div class="content">
     <div class="header no-print">
         <div>
             <h1 style="margin: 0;">🎯 Table QR Code Generator</h1>
@@ -265,6 +281,7 @@ if ($mode == 'localhost') {
             <label> tables (Max: 10)</label>
             <button type="submit" class="btn">Generate</button>
         </form>
+    </div>
     </div>
 
 </body>

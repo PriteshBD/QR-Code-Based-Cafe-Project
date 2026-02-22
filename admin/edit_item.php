@@ -153,6 +153,22 @@ if (isset($_POST['update_item'])) {
     <link rel="stylesheet" href="admin_styles.css">
 </head>
 <body class="admin-ui">
+    <div class="sidebar">
+        <div class="logo">
+            <h2>🍽️ P&S Cafe</h2>
+            <p>Admin Panel</p>
+        </div>
+        <nav>
+            <a href="admin_dashboard.php">📊 Dashboard</a>
+            <a href="manage_menu.php" class="active">🍕 Manage Menu</a>
+            <a href="view_orders.php">📋 View Orders</a>
+            <a href="staff_management.php">👥 Staff</a>
+            <a href="generate_qr.php">🔲 Table QR</a>
+            <a href="generate_staff_qr.php">🆔 Staff QR</a>
+        </nav>
+        <a href="../logout.php" class="logout-link">🚪 Logout</a>
+    </div>
+    <div class="content">
     <div class="container">
         <h1>✏️ Edit Menu Item</h1>
         
@@ -215,6 +231,7 @@ if (isset($_POST['update_item'])) {
                 <a href="manage_menu.php" class="btn btn-secondary">Cancel</a>
             </div>
         </form>
+    </div>
     </div>
 </body>
 </html>

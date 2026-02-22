@@ -146,6 +146,22 @@ $stats = $conn->query("SELECT
     <link rel="stylesheet" href="admin_styles.css">
 </head>
 <body class="admin-ui">
+    <div class="sidebar">
+        <div class="logo">
+            <h2>🍽️ P&S Cafe</h2>
+            <p>Admin Panel</p>
+        </div>
+        <nav>
+            <a href="admin_dashboard.php">📊 Dashboard</a>
+            <a href="manage_menu.php">🍕 Manage Menu</a>
+            <a href="view_orders.php" class="active">📋 View Orders</a>
+            <a href="staff_management.php">👥 Staff</a>
+            <a href="generate_qr.php">🔲 Table QR</a>
+            <a href="generate_staff_qr.php">🆔 Staff QR</a>
+        </nav>
+        <a href="../logout.php" class="logout-link">🚪 Logout</a>
+    </div>
+    <div class="content">
     <div class="header">
         <h1 style="margin: 0;">📦 Orders Management</h1>
         <a href="admin_dashboard.php" class="btn btn-secondary">← Back to Dashboard</a>
@@ -236,6 +252,7 @@ $stats = $conn->query("SELECT
                 <?php endif; ?>
             </tbody>
         </table>
+    </div>
     </div>
 
 </body>
