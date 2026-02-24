@@ -93,7 +93,6 @@ if (isset($_POST['mark_all_absent'])) {
             <a href="staff_management.php">👥 Staff</a>
             <a href="generate_qr.php">🔲 Table QR Codes</a>
             <a href="generate_staff_qr.php">🆔 Staff QR Codes</a>
-            <a href="inventory_tracking.php">📦 Inventory</a>
         </nav>
         <a href="../logout.php" class="logout-link">🚪 Logout</a>
     </div>
