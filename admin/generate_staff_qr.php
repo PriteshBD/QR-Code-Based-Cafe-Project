@@ -448,7 +448,6 @@ while ($row = $staff_result->fetch_assoc()) {
             <a href="staff_management.php">👥 Staff</a>
             <a href="generate_qr.php">🔲 Table QR Codes</a>
             <a href="generate_staff_qr.php" class="active">🆔 Staff QR Codes</a>
-            <a href="inventory_tracking.php">📦 Inventory</a>
         </nav>
         <a href="../logout.php" class="logout-link">🚪 Logout</a>
     </div>

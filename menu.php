@@ -45,17 +45,34 @@ if (isset($_SESSION['cart']) && !empty($_SESSION['cart'])) {
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>P&S Cafe | Menu</title>
+    <link rel="stylesheet" href="styles/theme.css">
     <style>
-        * { margin: 0; padding: 0; box-sizing: border-box; }
-        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background-color: #f8f9fa; margin: 0; padding-bottom: 120px; }
+        body { padding-bottom: 120px; }
         
-        /* Header */
-        .header { background: #333; color: white; padding: 15px; text-align: center; position: sticky; top: 0; z-index: 1000; box-shadow: 0 2px 5px rgba(0,0,0,0.1); }
-        .brand-name { font-size: 1.5em; font-weight: bold; color: #ff9800; }
-        .table-info { font-size: 0.9em; opacity: 0.8; margin-top: 5px; }
+        .header { 
+            background: var(--panel);
+            color: var(--ink);
+            padding: 15px;
+            text-align: center;
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+            box-shadow: var(--shadow);
+            border-bottom: 2px solid var(--border);
+        }
+        .brand-name { font-size: 1.5em; font-weight: 700; color: var(--accent); }
+        .table-info { font-size: 0.9em; color: var(--muted); margin-top: 5px; }
 
         /* Sections */
-        .section-title { padding: 15px 15px 5px; font-weight: bold; color: #555; text-transform: uppercase; letter-spacing: 1px; border-bottom: 2px solid #ddd; margin: 10px 15px; }
+        .section-title { 
+            padding: 15px 15px 5px; 
+            font-weight: 700; 
+            color: var(--ink);
+            text-transform: uppercase; 
+            letter-spacing: 1.2px;
+            border-bottom: 3px solid var(--accent-2);
+            margin: 20px 15px 15px 15px;
+        }
 
         /* Food Card Grid Container */
         .food-grid {
@@ -65,21 +82,23 @@ if (isset($_SESSION['cart']) && !empty($_SESSION['cart'])) {
             padding: 15px;
         }
 
-        /* Box-Type Food Card */
+        /* Food Card */
         .food-card {
-            background: white;
+            background: var(--panel);
             border-radius: 12px;
-            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+            box-shadow: var(--shadow);
+            border: 1px solid var(--border);
             overflow: hidden;
             display: flex;
             flex-direction: column;
-            transition: transform 0.3s, box-shadow 0.3s;
+            transition: all 0.3s ease;
             cursor: pointer;
             height: 100%;
         }
         .food-card:hover {
             transform: translateY(-5px);
-            box-shadow: 0 8px 16px rgba(0,0,0,0.15);
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.15);
+            border-color: var(--accent-2);
         }
         .food-card img { 
             width: 100%; 
@@ -96,22 +115,25 @@ if (isset($_SESSION['cart']) && !empty($_SESSION['cart'])) {
         .food-info h3 { 
             margin: 0 0 5px 0; 
             font-size: 0.95em; 
-            color: #333;
+            color: var(--ink);
             line-height: 1.2;
+            font-weight: 600;
         }
         .food-info .cat { 
             font-size: 0.7em; 
-            color: #fff; 
-            background: #ff9800; 
-            padding: 3px 6px; 
-            border-radius: 4px; 
+            color: white; 
+            background: var(--accent-2); 
+            padding: 4px 8px; 
+            border-radius: 5px; 
             display: inline-block;
             margin-bottom: 6px;
             width: fit-content;
+            font-weight: 600;
+            letter-spacing: 0.3px;
         }
         .food-info .price { 
-            color: #28a745; 
-            font-weight: bold;
+            color: var(--accent);
+            font-weight: 700;
             font-size: 1.1em;
             margin-bottom: 8px;
         }
@@ -121,7 +143,7 @@ if (isset($_SESSION['cart']) && !empty($_SESSION['cart'])) {
             display: inline-block;
             width: 16px;
             height: 16px;
-            border: 2px solid #28a745;
+            border: 2px solid var(--success);
             border-radius: 3px;
             position: relative;
             vertical-align: middle;
@@ -132,7 +154,7 @@ if (isset($_SESSION['cart']) && !empty($_SESSION['cart'])) {
             position: absolute;
             width: 8px;
             height: 8px;
-            background: #28a745;
+            background: var(--success);
             border-radius: 50%;
             top: 50%;
             left: 50%;
@@ -142,7 +164,7 @@ if (isset($_SESSION['cart']) && !empty($_SESSION['cart'])) {
             display: inline-block;
             width: 16px;
             height: 16px;
-            border: 2px solid #dc3545;
+            border: 2px solid var(--danger);
             border-radius: 3px;
             position: relative;
             vertical-align: middle;
@@ -155,7 +177,7 @@ if (isset($_SESSION['cart']) && !empty($_SESSION['cart'])) {
             height: 0;
             border-left: 5px solid transparent;
             border-right: 5px solid transparent;
-            border-bottom: 8px solid #dc3545;
+            border-bottom: 8px solid var(--danger);
             top: 50%;
             left: 50%;
             transform: translate(-50%, -50%);
@@ -164,7 +186,7 @@ if (isset($_SESSION['cart']) && !empty($_SESSION['cart'])) {
         /* Spice Level */
         .spice-indicator {
             font-size: 0.7em;
-            color: #ff4500;
+            color: var(--accent);
             margin-left: 5px;
         }
 
@@ -176,33 +198,39 @@ if (isset($_SESSION['cart']) && !empty($_SESSION['cart'])) {
             background: linear-gradient(135deg, #ffd700, #ffed4e);
             color: #333;
             font-size: 0.65em;
-            font-weight: bold;
-            padding: 4px 8px;
+            font-weight: 700;
+            padding: 5px 8px;
             border-radius: 12px;
-            box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+            box-shadow: 0 2px 8px rgba(0,0,0,0.2);
             z-index: 10;
+            letter-spacing: 0.2px;
         }
 
         /* Search and Filter Bar */
         .search-filter-bar {
-            background: white;
+            background: var(--panel);
             padding: 15px;
-            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+            box-shadow: var(--shadow);
+            border: 1px solid var(--border);
             position: sticky;
             top: 56px;
             z-index: 999;
+            margin: 10px;
+            border-radius: 10px;
         }
         .search-box {
             width: 100%;
             padding: 10px 15px;
-            border: 2px solid #ddd;
+            border: 2px solid var(--border);
             border-radius: 8px;
             font-size: 0.95em;
             margin-bottom: 10px;
+            font-family: 'Manrope', sans-serif;
         }
         .search-box:focus {
             outline: none;
-            border-color: #ff9800;
+            border-color: var(--accent-2);
+            box-shadow: 0 0 0 3px rgba(42, 157, 143, 0.15);
         }
         .filter-buttons {
             display: flex;
@@ -210,21 +238,25 @@ if (isset($_SESSION['cart']) && !empty($_SESSION['cart'])) {
             flex-wrap: wrap;
         }
         .filter-btn {
-            background: #f0f0f0;
-            border: 2px solid #ddd;
-            padding: 6px 12px;
+            background: var(--panel-2);
+            border: 2px solid var(--border);
+            padding: 8px 14px;
             border-radius: 20px;
             font-size: 0.85em;
             cursor: pointer;
             transition: all 0.3s;
+            font-weight: 600;
+            color: var(--muted);
+            font-family: 'Manrope', sans-serif;
         }
         .filter-btn:hover {
-            background: #e0e0e0;
+            background: var(--border);
+            border-color: var(--accent-2);
         }
         .filter-btn.active {
-            background: #ff9800;
+            background: var(--accent-2);
             color: white;
-            border-color: #ff9800;
+            border-color: var(--accent-2);
         }
         .food-card {
             position: relative;
@@ -232,39 +264,45 @@ if (isset($_SESSION['cart']) && !empty($_SESSION['cart'])) {
 
         /* Buttons */
         .add-btn {
-            background: #ff9800; 
+            background: var(--accent-2); 
             color: white; 
             border: none; 
             padding: 8px 12px;
-            border-radius: 6px; 
-            font-weight: bold; 
+            border-radius: 8px; 
+            font-weight: 600; 
             cursor: pointer; 
             text-decoration: none;
             font-size: 0.85em;
             width: 100%;
-            transition: background 0.3s;
+            transition: all 0.3s;
             margin-top: auto;
             display: block;
+            font-family: 'Manrope', sans-serif;
+            letter-spacing: 0.3px;
         }
         .add-btn:hover { 
-            background: #e68900; 
+            background: #22867b;
+            box-shadow: 0 5px 15px rgba(42, 157, 143, 0.3);
+            transform: translateY(-2px);
         }
 
         /* Out of Stock Style */
         .out-of-stock { 
             opacity: 0.6; 
-            background: #f0f0f0; 
+            background: var(--panel-2); 
         }
         .no-stock-badge { 
-            color: red; 
-            font-weight: bold; 
+            color: var(--danger); 
+            font-weight: 700; 
             font-size: 0.75em; 
-            border: 1px solid red; 
-            padding: 3px 6px; 
-            border-radius: 4px; 
+            border: 1px solid var(--danger); 
+            padding: 4px 8px; 
+            border-radius: 5px; 
+            text-transform: uppercase;
+            letter-spacing: 0.3px;
         }
 
-        /* Bestseller specific */
+        /* Bestseller grid */
         .bestseller-grid {
             display: grid;
             grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
@@ -278,8 +316,8 @@ if (isset($_SESSION['cart']) && !empty($_SESSION['cart'])) {
             bottom: 0;
             left: 0;
             right: 0;
-            background: white;
-            border-top: 2px solid #ddd;
+            background: var(--panel);
+            border-top: 2px solid var(--border);
             display: flex;
             gap: 10px;
             padding: 10px;
@@ -292,7 +330,7 @@ if (isset($_SESSION['cart']) && !empty($_SESSION['cart'])) {
             padding: 12px 15px;
             border: none;
             border-radius: 8px;
-            font-weight: bold;
+            font-weight: 700;
             cursor: pointer;
             text-decoration: none;
             display: flex;
@@ -302,26 +340,34 @@ if (isset($_SESSION['cart']) && !empty($_SESSION['cart'])) {
             font-size: 0.9em;
             transition: all 0.3s;
             white-space: nowrap;
+            font-family: 'Manrope', sans-serif;
+            letter-spacing: 0.3px;
         }
 
         .float-cart-btn {
-            background: #333;
+            background: var(--ink);
             color: white;
             position: relative;
         }
         .float-cart-btn:active {
             transform: scale(0.95);
-            background: #222;
+            background: #1a1f35;
+        }
+        .float-cart-btn:hover {
+            box-shadow: 0 5px 15px rgba(15, 23, 42, 0.3);
         }
 
         .float-bell-btn {
-            background: #ff9800;
+            background: var(--accent-2);
             color: white;
             position: relative;
         }
+        .float-bell-btn:hover {
+            box-shadow: 0 5px 15px rgba(42, 157, 143, 0.3);
+            background: #22867b;
+        }
         .float-bell-btn:active {
             transform: scale(0.95);
-            background: #e68900;
         }
         .float-bell-btn.loading {
             opacity: 0.6;
@@ -340,6 +386,24 @@ if (isset($_SESSION['cart']) && !empty($_SESSION['cart'])) {
             animation: bellRing 0.5s ease-in-out;
         }
 
+        /* Notification Badge */
+        .notification-badge {
+            position: absolute;
+            top: -8px;
+            right: -8px;
+            background: var(--danger);
+            color: white;
+            border-radius: 50%;
+            width: 24px;
+            height: 24px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.75em;
+            font-weight: 700;
+            border: 2px solid var(--panel);
+        }
+
         /* Mobile Responsiveness */
         @media (max-width: 768px) {
             body { padding-bottom: 130px; }
@@ -349,8 +413,8 @@ if (isset($_SESSION['cart']) && !empty($_SESSION['cart'])) {
                 padding: 12px;
             }
             .section-title {
-                margin: 8px 12px;
-                padding: 12px 12px 4px;
+                margin: 12px;
+                padding: 12px 0;
                 font-size: 0.95em;
             }
             .float-action-bar {
@@ -366,7 +430,7 @@ if (isset($_SESSION['cart']) && !empty($_SESSION['cart'])) {
         @media (max-width: 480px) {
             .brand-name { font-size: 1.2em; }
             .table-info { font-size: 0.8em; }
-            .food-grid {
+            .food-grid, .bestseller-grid {
                 grid-template-columns: repeat(auto-fill, minmax(110px, 1fr));
                 gap: 10px;
                 padding: 10px;
@@ -387,23 +451,7 @@ if (isset($_SESSION['cart']) && !empty($_SESSION['cart'])) {
                 border-radius: 6px;
             }
         }
-
-        /* Notification Badge */
-        .notification-badge {
-            position: absolute;
-            top: -8px;
-            right: -8px;
-            background: #dc3545;
-            color: white;
-            border-radius: 50%;
-            width: 24px;
-            height: 24px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 0.75em;
-            font-weight: bold;
-        }
+    </style>
     </style>
 </head>
 <body>

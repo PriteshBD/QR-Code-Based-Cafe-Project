@@ -28,17 +28,9 @@ $table_id = $order['table_id'];
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Payment | P&S Cafe</title>
+    <link rel="stylesheet" href="styles/theme.css">
     <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-
         body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            min-height: 100vh;
             display: flex;
             align-items: center;
             justify-content: center;
@@ -46,16 +38,17 @@ $table_id = $order['table_id'];
         }
 
         .payment-container {
-            background: white;
-            border-radius: 15px;
-            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.3);
+            background: var(--panel);
+            border-radius: 14px;
+            box-shadow: var(--shadow);
+            border: 1px solid var(--border);
             max-width: 500px;
             width: 100%;
             overflow: hidden;
         }
 
         .payment-header {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            background: linear-gradient(135deg, var(--accent-2) 0%, var(--accent) 100%);
             color: white;
             padding: 30px;
             text-align: center;
@@ -64,6 +57,7 @@ $table_id = $order['table_id'];
         .payment-header h1 {
             font-size: 1.8em;
             margin-bottom: 10px;
+            font-weight: 700;
         }
 
         .payment-header p {
@@ -76,10 +70,11 @@ $table_id = $order['table_id'];
         }
 
         .order-summary {
-            background: #f8f9fa;
+            background: var(--panel-2);
             padding: 20px;
             border-radius: 10px;
             margin-bottom: 20px;
+            border: 1px solid var(--border);
         }
 
         .summary-row {
@@ -87,19 +82,21 @@ $table_id = $order['table_id'];
             justify-content: space-between;
             margin-bottom: 12px;
             font-size: 0.95em;
+            color: var(--ink);
         }
 
         .summary-row label {
-            color: #666;
-            font-weight: 500;
+            color: var(--muted);
+            font-weight: 600;
         }
 
         .summary-row.total {
-            border-top: 2px solid #ddd;
+            border-top: 2px solid var(--border);
             padding-top: 12px;
             margin-top: 12px;
-            font-weight: bold;
+            font-weight: 700;
             font-size: 1.1em;
+            color: var(--accent);
         }
 
         .payment-methods {
@@ -107,9 +104,11 @@ $table_id = $order['table_id'];
         }
 
         .payment-methods h3 {
-            color: #333;
+            color: var(--ink);
             margin-bottom: 15px;
             font-size: 1em;
+            font-weight: 700;
+            letter-spacing: 0.3px;
         }
 
         .method-grid {
@@ -120,18 +119,18 @@ $table_id = $order['table_id'];
         }
 
         .payment-method {
-            border: 2px solid #e0e0e0;
+            border: 2px solid var(--border);
             border-radius: 10px;
             padding: 15px;
             text-align: center;
             cursor: pointer;
             transition: all 0.3s;
-            background: white;
+            background: var(--panel-2);
         }
 
         .payment-method:hover {
-            border-color: #667eea;
-            background: #f8f9ff;
+            border-color: var(--accent-2);
+            background: rgba(42, 157, 143, 0.05);
             transform: translateY(-2px);
         }
 
@@ -140,8 +139,8 @@ $table_id = $order['table_id'];
         }
 
         .payment-method input[type="radio"]:checked + label {
-            color: #667eea;
-            font-weight: bold;
+            color: var(--accent-2);
+            font-weight: 700;
         }
 
         .payment-method label {
@@ -153,18 +152,18 @@ $table_id = $order['table_id'];
 
         .payment-method .method-name {
             font-size: 0.85em;
-            color: #666;
+            color: var(--muted);
             cursor: pointer;
         }
 
         .info-box {
-            background: #e3f2fd;
-            border-left: 4px solid #2196f3;
+            background: rgba(37, 99, 235, 0.1);
+            border-left: 4px solid var(--info);
             padding: 12px;
-            border-radius: 5px;
+            border-radius: 8px;
             margin-bottom: 20px;
             font-size: 0.9em;
-            color: #1976d2;
+            color: var(--info);
         }
 
         .button-group {
@@ -177,30 +176,34 @@ $table_id = $order['table_id'];
             flex: 1;
             padding: 12px 20px;
             border: none;
-            border-radius: 8px;
-            font-weight: bold;
+            border-radius: 10px;
+            font-weight: 700;
             font-size: 1em;
             cursor: pointer;
             transition: all 0.3s;
+            font-family: 'Manrope', sans-serif;
+            letter-spacing: 0.3px;
         }
 
         .btn-primary {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            background: linear-gradient(135deg, var(--accent-2) 0%, var(--accent) 100%);
             color: white;
         }
 
         .btn-primary:hover {
             transform: translateY(-2px);
-            box-shadow: 0 5px 20px rgba(102, 126, 234, 0.4);
+            box-shadow: 0 10px 25px rgba(42, 157, 143, 0.3);
         }
 
         .btn-secondary {
-            background: #e0e0e0;
-            color: #333;
+            background: var(--panel-2);
+            color: var(--ink);
+            border: 1px solid var(--border);
         }
 
         .btn-secondary:hover {
-            background: #d0d0d0;
+            background: var(--border);
+            border-color: var(--muted);
         }
 
         @media (max-width: 480px) {
@@ -217,11 +220,11 @@ $table_id = $order['table_id'];
             }
 
             .button-group {
-                grid-template-columns: 1fr;
+                flex-direction: column;
             }
 
             .proceed-btn {
-                grid-column: span 1;
+                width: 100%;
             }
         }
     </style>
@@ -233,41 +236,41 @@ $table_id = $order['table_id'];
             <p>Secure Payment Processing</p>
         </div>
 
-        <div class="payment-content">
-            <div class="order-info">
-                <label>Order ID</label>
-                <div class="value">#<?php echo $order_id; ?></div>
+        <div class="payment-body">
+            <div class="order-summary">
+                <div class="summary-row">
+                    <label>Order ID:</label>
+                    <strong>#<?php echo $order_id; ?></strong>
+                </div>
                 
-                <label>Table Number</label>
-                <div class="value"><?php echo $table_id; ?></div>
+                <div class="summary-row">
+                    <label>Table Number:</label>
+                    <strong><?php echo $table_id; ?></strong>
+                </div>
             </div>
 
-            <div class="amount-section">
-                <div class="amount-label">Total Amount</div>
-                <div class="amount">₹<?php echo number_format($amount, 2); ?></div>
+            <div style="background: linear-gradient(135deg, var(--accent-2) 0%, var(--accent) 100%); color: white; padding: 20px; border-radius: 10px; margin: 20px 0; text-align: center;">
+                <div style="font-size: 0.9em; opacity: 0.9; margin-bottom: 8px;">Total Amount</div>
+                <div style="font-size: 2em; font-weight: 700;">₹<?php echo number_format($amount, 2); ?></div>
             </div>
 
-            <div class="payment-method">
-                <div class="method">💰 Cash Payment</div>
-                <p style="font-size: 0.9em; margin-top: 5px;">Payment to be collected at counter</p>
+            <div class="order-summary">
+                <div style="font-weight: 700; text-align: center; color: var(--ink); padding: 10px;">💰 Cash Payment at Counter</div>
+                <p style="font-size: 0.9em; margin: 10px 0; text-align: center; color: var(--muted);">Payment will be collected at the counter</p>
             </div>
 
             <form id="paymentForm" method="POST" action="verify_payment.php">
                 <input type="hidden" name="order_id" value="<?php echo $order_id; ?>">
                 
-                <div class="button-group">
-                    <button type="button" class="cancel-btn" onclick="goBack()">❌ Cancel</button>
-                    <button type="submit" class="proceed-btn">✅ Confirm Payment</button>
+                <div class="button-group" style="margin-top: 30px;">
+                    <button type="button" class="btn btn-secondary" onclick="goBack()">❌ Cancel</button>
+                    <button type="submit" class="btn btn-primary proceed-btn">✅ Confirm Payment</button>
                 </div>
             </form>
 
-            <div class="security-note">
-                <strong>✓ Secure</strong> - Your payment information is safe
-            </div>
-
-            <div class="info-box">
+            <div class="info-box" style="margin-top: 20px;">
                 <strong>ℹ️ Payment Instructions:</strong>
-                <p style="margin-top: 10px;">Please pay ₹<?php echo number_format($amount, 2); ?> at the counter. Click "Confirm Payment" to mark this order as paid.</p>
+                <p style="margin-top: 10px;">Please pay ₹<?php echo number_format($amount, 2); ?> at the counter. Click "Confirm Payment" to proceed.</p>
             </div>
         </div>
     </div>

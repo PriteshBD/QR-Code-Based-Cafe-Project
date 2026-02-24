@@ -10,48 +10,50 @@ if (empty($_SESSION['cart'])) {
     <meta charset='UTF-8'>
     <meta name='viewport' content='width=device-width, initial-scale=1.0'>
     <title>Cart Empty | P&S Cafe</title>
+    <link rel='stylesheet' href='styles/theme.css'>
     <style>
-        * { margin: 0; padding: 0; box-sizing: border-box; }
         body {
-            font-family: 'Segoe UI', sans-serif;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            min-height: 100vh;
             display: flex;
             align-items: center;
             justify-content: center;
+            min-height: 100vh;
             padding: 20px;
         }
         .empty-cart {
-            background: white;
+            background: var(--panel);
             padding: 40px;
-            border-radius: 15px;
+            border-radius: 14px;
             text-align: center;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+            box-shadow: var(--shadow);
+            border: 1px solid var(--border);
             max-width: 400px;
             width: 100%;
         }
         .empty-cart h2 {
             font-size: 2em;
             margin-bottom: 15px;
-            color: #333;
+            color: var(--ink);
         }
         .empty-cart p {
-            color: #666;
+            color: var(--muted);
             margin-bottom: 25px;
             font-size: 1.05em;
         }
         .empty-cart a {
             display: inline-block;
-            background: #ff9800;
+            background: var(--accent-2);
             color: white;
             padding: 12px 30px;
-            border-radius: 25px;
+            border-radius: 10px;
             text-decoration: none;
-            font-weight: bold;
+            font-weight: 700;
             transition: all 0.3s;
+            letter-spacing: 0.3px;
         }
-        .empty-cart a:active {
-            transform: scale(0.95);
+        .empty-cart a:hover {
+            background: #22867b;
+            box-shadow: 0 5px 15px rgba(42, 157, 143, 0.3);
+            transform: translateY(-2px);
         }
     </style>
 </head>
@@ -80,108 +82,143 @@ $total_price = 0;
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Your Cart | P&S Cafe</title>
+    <link rel="stylesheet" href="styles/theme.css">
     <style>
-        * { margin: 0; padding: 0; box-sizing: border-box; }
         body { 
-            font-family: 'Segoe UI', sans-serif; 
-            background: #f4f4f4; 
             padding: 20px;
             padding-bottom: 100px;
         }
         h2 { 
             text-align: center; 
             margin-bottom: 20px;
-            color: #333;
+            color: var(--ink);
+            font-size: 1.8em;
         }
         .cart-item { 
-            background: white; 
+            background: var(--panel);
             padding: 15px; 
-            border-radius: 8px; 
+            border-radius: 10px; 
             margin-bottom: 12px; 
             display: flex; 
             justify-content: space-between; 
             align-items: center;
-            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+            box-shadow: var(--shadow);
+            border: 1px solid var(--border);
+            transition: all 0.3s ease;
+        }
+        .cart-item:hover {
+            box-shadow: 0 10px 25px rgba(0,0,0,0.1);
+            transform: translateY(-2px);
         }
         .cart-item-details strong {
             display: block;
             margin-bottom: 5px;
-            color: #333;
+            color: var(--ink);
             font-size: 1em;
+            font-weight: 700;
         }
         .cart-item-details small {
-            color: #666;
+            color: var(--muted);
             font-size: 0.9em;
         }
         .cart-item-price {
-            font-weight: bold;
-            color: #ff9800;
+            font-weight: 700;
+            color: var(--accent);
             font-size: 1.1em;
             min-width: 80px;
             text-align: right;
         }
         .total-box { 
-            background: #333; 
-            color: white; 
+            background: var(--panel);
+            border: 2px solid var(--accent-2);
             padding: 20px; 
-            border-radius: 10px; 
+            border-radius: 12px; 
             margin-top: 20px;
-            box-shadow: 0 4px 10px rgba(0,0,0,0.2);
+            box-shadow: var(--shadow);
         }
         .total-box label {
             display: block;
             margin-top: 15px;
             margin-bottom: 8px;
-            font-weight: bold;
+            font-weight: 700;
+            color: var(--ink);
+            font-size: 0.95em;
+            letter-spacing: 0.3px;
         }
         .note-box { 
             width: 100%; 
             padding: 10px; 
             margin-bottom: 15px;
-            border: 1px solid #555; 
-            border-radius: 5px; 
-            font-family: sans-serif;
-            background: #444;
-            color: white;
+            border: 1px solid var(--border); 
+            border-radius: 8px; 
+            font-family: 'Manrope', sans-serif;
+            background: var(--panel-2);
+            color: var(--ink);
             resize: vertical;
         }
+        .note-box:focus {
+            outline: none;
+            border-color: var(--accent-2);
+            box-shadow: 0 0 0 3px rgba(42, 157, 143, 0.15);
+        }
         .pay-btn {
-            background: #28a745; 
+            background: var(--accent-2); 
             color: white; 
             border: none; 
             padding: 15px; 
             width: 100%;
             font-size: 1.1em; 
-            font-weight: bold; 
-            border-radius: 8px; 
+            font-weight: 700; 
+            border-radius: 10px; 
             cursor: pointer;
-            transition: background 0.3s;
+            transition: all 0.3s;
+            letter-spacing: 0.3px;
+            font-family: 'Manrope', sans-serif;
+        }
+        .pay-btn:hover {
+            background: #22867b;
+            box-shadow: 0 10px 25px rgba(42, 157, 143, 0.3);
+            transform: translateY(-2px);
         }
         .pay-btn:active {
-            transform: scale(0.98);
-            background: #218838;
+            transform: translateY(0px);
         }
         .clear-btn { 
-            color: #dc3545; 
+            color: var(--danger); 
             text-decoration: none; 
             font-size: 0.9em; 
             display: block; 
             text-align: center; 
             margin-top: 15px;
             padding: 10px;
-            background: white;
-            border-radius: 5px;
-            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+            background: var(--panel);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            box-shadow: var(--shadow);
+            font-weight: 600;
+            transition: all 0.3s;
+            letter-spacing: 0.3px;
+        }
+        .clear-btn:hover {
+            background: rgba(230, 57, 70, 0.1);
+            border-color: var(--danger);
         }
         .back-btn {
             display: inline-block;
-            background: #6c757d;
+            background: var(--muted);
             color: white;
             padding: 10px 15px;
-            border-radius: 5px;
+            border-radius: 8px;
             text-decoration: none;
             margin-bottom: 15px;
             font-size: 0.9em;
+            font-weight: 600;
+            transition: all 0.3s;
+            letter-spacing: 0.3px;
+        }
+        .back-btn:hover {
+            background: #574b50;
+            transform: translateY(-2px);
         }
         .total-row {
             display: flex; 
@@ -189,7 +226,9 @@ $total_price = 0;
             font-size: 1.3em; 
             margin-bottom: 20px;
             padding-bottom: 15px;
-            border-bottom: 1px solid #555;
+            border-bottom: 1px solid var(--border);
+            color: var(--ink);
+            font-weight: 700;
         }
 
         /* Mobile Responsiveness */
@@ -257,7 +296,7 @@ $total_price = 0;
                 <span>₹<?php echo number_format($total_price, 2); ?></span>
             </div>
 
-            <label for="note">👨‍🍳 Note to Chef (Optional):</label>
+            <label for="note">👨‍🍳 Special Instructions (Optional):</label>
             <textarea name="order_note" class="note-box" rows="2" placeholder="e.g. No onions, Extra spicy, Allergy info..."></textarea>
             
             <input type="hidden" name="total_amount" value="<?php echo $total_price; ?>">
