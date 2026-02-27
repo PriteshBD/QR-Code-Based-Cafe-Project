@@ -55,19 +55,33 @@ $daily_revenue = $revenue_row['revenue'] ?? 0;
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Manager Dashboard | P&S Cafe</title>
+    <link rel="stylesheet" href="../admin/admin_styles.css">
     <style>
-        * { margin: 0; padding: 0; box-sizing: border-box; }
-        body { font-family: 'Segoe UI', sans-serif; background: #f5f5f5; }
+        body {
+            font-family: 'Manrope', sans-serif;
+            background: #1a1a1a;
+            color: #000;
+        }
         
         .header {
-            background: #d32f2f;
+            background: linear-gradient(135deg, #1a1a1a 0%, #2d2d2d 100%);
             color: white;
+            border-bottom: 3px solid #FFD700;
             padding: 20px;
             text-align: center;
-            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            box-shadow: 0 4px 15px rgba(255, 215, 0, 0.1);
         }
-        .header h1 { font-size: 1.8em; margin-bottom: 5px; }
-        .header-info { font-size: 0.95em; opacity: 0.9; }
+        .header h1 { 
+            font-size: 1.8em; 
+            margin-bottom: 5px;
+            color: #FFD700;
+            font-weight: 700;
+        }
+        .header-info { 
+            font-size: 0.95em; 
+            opacity: 0.9;
+            color: #ffffff;
+        }
         
         .container { max-width: 1200px; margin: 20px auto; padding: 0 15px; }
         
@@ -197,7 +211,7 @@ $daily_revenue = $revenue_row['revenue'] ?? 0;
         .logout-btn:hover { background: #d32f2f; color: white; }
     </style>
 </head>
-<body>
+<body data-staff-role="Manager">
     <div class="header">
         <div class="logout-btn" onclick="if(confirm('Logout?')) window.location='staff_login.php'">Logout</div>
         <h1>👔 Manager Dashboard</h1>
@@ -218,6 +232,18 @@ $daily_revenue = $revenue_row['revenue'] ?? 0;
                 <h3>₹<?php echo number_format($daily_revenue, 0); ?></h3>
                 <p>Today's Revenue</p>
             </div>
+        </div>
+
+        <div style="margin: 20px 0; display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 12px;">
+            <a href="payment_approval.php" style="background: #667eea; color: white; padding: 15px; text-align: center; border-radius: 8px; text-decoration: none; font-weight: bold; transition: all 0.3s;">
+                💳 Payment Approvals
+            </a>
+            <a href="../../kitchen_display_system.php" style="background: #ff6b35; color: white; padding: 15px; text-align: center; border-radius: 8px; text-decoration: none; font-weight: bold; transition: all 0.3s;" target="_blank">
+                🎯 Kitchen Display System
+            </a>
+            <a href="../../order_history.php" style="background: #4caf50; color: white; padding: 15px; text-align: center; border-radius: 8px; text-decoration: none; font-weight: bold; transition: all 0.3s;">
+                📋 Order History
+            </a>
         </div>
 
         <h2 class="section-title">🔔 Customer Service Requests</h2>
@@ -287,5 +313,8 @@ $daily_revenue = $revenue_row['revenue'] ?? 0;
             location.reload();
         }, 10000); // Auto-refresh every 10 seconds
     </script>
+    
+    <!-- Notification System -->
+    <script src="../js/notifications.js"></script>
 </body>
 </html>
