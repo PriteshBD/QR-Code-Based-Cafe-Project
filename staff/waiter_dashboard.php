@@ -49,19 +49,33 @@ $ready_count = $total_row['total'];
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Waiter Dashboard | P&S Cafe</title>
+    <link rel="stylesheet" href="../admin/admin_styles.css">
     <style>
-        * { margin: 0; padding: 0; box-sizing: border-box; }
-        body { font-family: 'Segoe UI', sans-serif; background: #f5f5f5; }
+        body {
+            font-family: 'Manrope', sans-serif;
+            background: #1a1a1a;
+            color: #000;
+        }
         
         .header {
-            background: #2196f3;
+            background: linear-gradient(135deg, #1a1a1a 0%, #2d2d2d 100%);
             color: white;
+            border-bottom: 3px solid #FFD700;
             padding: 20px;
             text-align: center;
-            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            box-shadow: 0 4px 15px rgba(255, 215, 0, 0.1);
         }
-        .header h1 { font-size: 1.8em; margin-bottom: 5px; }
-        .header-info { font-size: 0.95em; opacity: 0.9; }
+        .header h1 { 
+            font-size: 1.8em; 
+            margin-bottom: 5px; 
+            color: #FFD700;
+            font-weight: 700;
+        }
+        .header-info { 
+            font-size: 0.95em; 
+            opacity: 0.9;
+            color: #ffffff;
+        }
         
         .container { max-width: 1200px; margin: 20px auto; padding: 0 15px; }
         
@@ -189,7 +203,7 @@ $ready_count = $total_row['total'];
         .logout-btn:hover { background: #2196f3; color: white; }
     </style>
 </head>
-<body>
+<body data-staff-role="Waiter">
     <div class="header">
         <div class="logout-btn" onclick="if(confirm('Logout?')) window.location='staff_login.php'">Logout</div>
         <h1>🚶 Waiter Dashboard</h1>
@@ -268,5 +282,8 @@ $ready_count = $total_row['total'];
             location.reload();
         }, 20000); // Auto-refresh every 20 seconds
     </script>
+    
+    <!-- Notification System -->
+    <script src="../js/notifications.js"></script>
 </body>
 </html>
