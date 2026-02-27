@@ -51,9 +51,13 @@ $pending_count = $total_row['total'];
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Chef Dashboard | P&S Cafe</title>
+    <link rel="stylesheet" href="../admin/admin_styles.css">
     <style>
-        * { margin: 0; padding: 0; box-sizing: border-box; }
-        body { font-family: 'Segoe UI', sans-serif; background: #f5f5f5; }
+        body {
+            font-family: 'Manrope', sans-serif;
+            background: #1a1a1a;
+            color: #000;
+        }
         
         .header {
             background: #ff6b35;
@@ -198,7 +202,7 @@ $pending_count = $total_row['total'];
         .logout-btn:hover { background: #ff6b35; color: white; }
     </style>
 </head>
-<body>
+<body data-staff-role="Chef">
     <div class="header">
         <div class="logout-btn" onclick="if(confirm('Logout?')) window.location='staff_login.php'">Logout</div>
         <h1>👨‍🍳 Chef Dashboard</h1>
@@ -273,5 +277,8 @@ $pending_count = $total_row['total'];
             location.reload();
         }, 15000); // Auto-refresh every 15 seconds
     </script>
+    
+    <!-- Notification System -->
+    <script src="../js/notifications.js"></script>
 </body>
 </html>
