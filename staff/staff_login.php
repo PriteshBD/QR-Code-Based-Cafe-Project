@@ -25,7 +25,18 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         $date = date('Y-m-d');
         $conn->query("INSERT INTO attendance (staff_id, date, status) VALUES ('$staff_id', '$date', 'Present') ON DUPLICATE KEY UPDATE status='Present'");
         
-        header("Location: staff_dashboard.php");
+        // Redirect based on role
+        if ($staff['role'] === 'Chef') {
+            header("Location: chef_dashboard.php");
+        } elseif ($staff['role'] === 'Barista') {
+            header("Location: barista_dashboard.php");
+        } elseif ($staff['role'] === 'Waiter') {
+            header("Location: waiter_dashboard.php");
+        } elseif ($staff['role'] === 'Manager') {
+            header("Location: manager_dashboard.php");
+        } else {
+            header("Location: staff_dashboard.php");
+        }
         exit();
     } else {
         $error = "Invalid Credentials!";

@@ -63,26 +63,21 @@ $stats = $conn->query("SELECT
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="refresh" content="15"> <!-- Auto refresh every 15s -->
+    <link rel="stylesheet" href="../admin/admin_styles.css">
     <style>
-        * { margin: 0; padding: 0; box-sizing: border-box; }
-        
-        body { 
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; 
-            background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%); 
-            color: white; 
-            min-height: 100vh;
-            padding: 0;
+        body.admin-ui {
+            grid-template-columns: 1fr;
+            background: #1a1a1a;
         }
         
-        /* Header */
         .top-bar {
-            background: rgba(0, 0, 0, 0.3);
-            backdrop-filter: blur(10px);
+            background: linear-gradient(135deg, #1a1a1a 0%, #2d2d2d 100%);
+            border-bottom: 3px solid #FFD700;
             padding: 15px 30px;
             display: flex;
             justify-content: space-between;
             align-items: center;
-            box-shadow: 0 2px 10px rgba(0,0,0,0.3);
+            box-shadow: 0 4px 15px rgba(255, 215, 0, 0.1);
             position: sticky;
             top: 0;
             z-index: 100;
@@ -97,6 +92,7 @@ $stats = $conn->query("SELECT
         .top-bar h1 {
             font-size: 1.5em;
             font-weight: 600;
+            color: #FFD700;
         }
         
         .user-info {

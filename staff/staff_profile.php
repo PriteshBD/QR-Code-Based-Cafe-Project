@@ -46,33 +46,35 @@ $stats = $conn->query("
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>My Profile | P&S Cafe</title>
+    <link rel="stylesheet" href="../admin/admin_styles.css">
     <style>
-        * { margin: 0; padding: 0; box-sizing: border-box; }
-        
         body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%);
-            color: white;
+            font-family: 'Manrope', sans-serif;
+            background: #1a1a1a;
+            color: #fff;
             min-height: 100vh;
             padding-bottom: 30px;
         }
         
         .header {
-            background: rgba(0, 0, 0, 0.3);
+            background: linear-gradient(135deg, #1a1a1a 0%, #2d2d2d 100%);
+            border-bottom: 3px solid #FFD700;
             backdrop-filter: blur(10px);
             padding: 15px 30px;
             display: flex;
             justify-content: space-between;
             align-items: center;
-            box-shadow: 0 2px 10px rgba(0,0,0,0.3);
+            box-shadow: 0 4px 15px rgba(255, 215, 0, 0.1);
         }
         
         .header h1 {
             font-size: 1.5em;
+            color: #FFD700;
+            font-weight: 700;
         }
         
         .back-btn {
-            background: rgba(255, 255, 255, 0.2);
+            background: rgba(255, 215, 0, 0.2);
             color: white;
             padding: 8px 15px;
             border-radius: 20px;
