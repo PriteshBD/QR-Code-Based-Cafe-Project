@@ -1,7 +1,7 @@
 -- ============================================
 -- QR CODE BASED CAFE PROJECT - COMPLETE DATABASE SETUP
--- Last Updated: February 22, 2026
--- Version: 5.0 (CONSOLIDATED)
+-- Last Updated: February 28, 2026
+-- Version: 5.1 (UPDATED)
 -- ============================================
 -- 
 -- This is a consolidated database file that includes:
